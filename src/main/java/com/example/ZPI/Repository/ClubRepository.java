@@ -1,17 +1,19 @@
 package com.example.ZPI.Repository;
 
 import com.example.ZPI.entities.Club;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ClubRepository extends JpaRepository<Club, Integer> {
+
+public interface ClubRepository extends MongoRepository<Club, Integer> {
 
     List<Club> findAll();
 
     @Override
-    Optional<Club> findById(Integer clubId);
+    Optional<Club> findById(Integer id);
 
     List<Club> findAllByNameContains(String name);
+
 }

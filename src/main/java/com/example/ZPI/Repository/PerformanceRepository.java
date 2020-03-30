@@ -1,18 +1,20 @@
 package com.example.ZPI.Repository;
 
 import com.example.ZPI.entities.Performance;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PerformanceRepository extends JpaRepository<Performance, Integer> {
+@Repository
+public interface PerformanceRepository extends MongoRepository<Performance, Integer> {
 
     @Override
     List<Performance> findAll();
 
     @Override
-    Optional<Performance> findById(Integer integer);
+    Optional<Performance> findById(Integer id);
 
     List<Performance> findAllByAthlete(int athleteId);
 
