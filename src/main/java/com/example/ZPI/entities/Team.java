@@ -18,6 +18,7 @@ public class Team {
 
     private String name;
     private float budget;
+    private int points;
 
     private int user;
     private Set<Athlete> athletes;

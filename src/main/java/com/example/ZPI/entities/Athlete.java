@@ -22,6 +22,7 @@ public class Athlete {
     private String nationality;
     private float value;
     private Category category;
+    private int points;
 
     private int club;
     private Set<Performance> performances;

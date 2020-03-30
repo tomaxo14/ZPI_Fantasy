@@ -8,6 +8,7 @@ public class ZpiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ZpiApplication.class, args);
+
 	}
 
 }
