@@ -16,19 +16,19 @@ public class Role {
     @Id
     private int roleId;
 
-    private String name;
+    private ERole name;
 
-    private Set<User> users;
+//    private Set<User> users;
 
-    public Role(String name) {
+    public Role(ERole name) {
         this.name = name;
     }
 
-    public void addUser(User tempUser) {
-        if (users == null) {
-            users = new HashSet<>();
-        }
-        users.add(tempUser);
-        //tempUser.setRole(this.getRoleId());
-    }
+//    public void addUser(User tempUser) {
+//        if (users == null) {
+//            users = new HashSet<>();
+//        }
+//        users.add(tempUser);
+//        //tempUser.setRole(this.getRoleId());
+//    }
 }
