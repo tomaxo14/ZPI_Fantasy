@@ -15,7 +15,7 @@ public interface TeamRepository extends MongoRepository<Team, Integer> {
     @Override
     Optional<Team> findById(Integer id);
 
-    List<Team> findAllByNameContains(String name);
+    Optional<Team> findByNameEquals(String name);
 
     Team save(Team team);
 

@@ -1,15 +1,20 @@
 package com.example.ZPI.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection="athletes")
 public class Athlete {
     public enum Category{senior, junior, obcokrajowiec};
@@ -25,8 +30,9 @@ public class Athlete {
     private int points;
 
     private int club;
-    private Set<Performance> performances;
+    private Set<Integer> performances;
     private Set<Team> teams;
+    private ETeamRole teamRole;
 
     public Athlete(String firstName, String surname, String nationality, float value, String category) {
         this.firstName = firstName;
@@ -40,7 +46,7 @@ public class Athlete {
         if (performances == null) {
             performances = new HashSet<>();
         }
-        performances.add(tempPerformance);
+        performances.add(tempPerformance.getPerformanceId());
         tempPerformance.setAthlete(this.getAthleteId());
     }
 
