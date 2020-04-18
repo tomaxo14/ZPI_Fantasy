@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
@@ -29,6 +31,8 @@ public class Team {
     public Team(String name) {
         this.name = name;
         this.budget = DEFAULT_BUDGET;
+        this.athletes = new HashSet<>();
+        this.points = 0;
     }
 
     public void addAthlete(Athlete tempAthlete) {
@@ -36,5 +40,16 @@ public class Team {
             athletes = new HashSet<>();
         }
         athletes.add(tempAthlete);
+        budget = budget - tempAthlete.getValue();
+    }
+
+    @Override
+    public int hashCode() {
+        return ((Integer)teamId).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return teamId==((Team)obj).getTeamId();
     }
 }
