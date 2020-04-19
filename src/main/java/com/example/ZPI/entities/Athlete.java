@@ -15,9 +15,11 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection="athletes")
+@Document(collection = "athletes")
 public class Athlete {
-    public enum Category{senior, junior, obcokrajowiec};
+    public enum Category {senior, junior, obcokrajowiec}
+
+    ;
 
     @Id
     private int athleteId;
@@ -58,4 +60,13 @@ public class Athlete {
         //tempTeam.setAthlete(this.getAthleteId());
     }
 
+    @Override
+    public int hashCode() {
+        return ((Integer) athleteId).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return athleteId == ((Athlete) obj).athleteId;
+    }
 }

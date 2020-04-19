@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TeamRepository extends MongoRepository<Team, Integer> {
+public interface TeamRepository extends MongoRepository<Team, Integer>, TeamRepositoryCustom {
     @Override
     List<Team> findAll();
 
@@ -16,8 +16,4 @@ public interface TeamRepository extends MongoRepository<Team, Integer> {
     Optional<Team> findById(Integer id);
 
     Optional<Team> findByNameEquals(String name);
-
-    Team save(Team team);
-
-    void deleteByTeamId();
 }
