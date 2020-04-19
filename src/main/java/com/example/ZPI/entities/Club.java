@@ -39,7 +39,7 @@ public class Club {
         if (matches == null) {
             matches = new HashSet<>();
         }
-        matches.add(tempMatch);
+       matches.add(tempMatch);
         //tempMatch.setClub(this.getClubId());
     }
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.text.ParseException;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -23,8 +25,8 @@ public class AthleteController {
     }
 
     @GetMapping("/athleteDetails")
-    public ResponseEntity<?> athleteDetails(@RequestParam int athleteId){
-        return ResponseEntity.ok(athleteService.getAthlete(athleteId));
+    public ResponseEntity<?> athleteDetails(@RequestParam int athleteId) throws ParseException {
+        return ResponseEntity.ok(athleteService.getAthleteDetails(athleteId));
     }
 
     @GetMapping("/teamAthletes")

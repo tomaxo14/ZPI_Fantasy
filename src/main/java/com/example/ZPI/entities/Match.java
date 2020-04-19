@@ -1,6 +1,8 @@
 package com.example.ZPI.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,6 +13,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "matches")
 public class Match {
 
@@ -18,15 +22,15 @@ public class Match {
     private int matchId;
 
     private int matchWeek;
-    private Date date;
+    private String date;
     private int hostResult;
     private int awayResult;
     private String venue;
 
-    private Set<Club> clubs;
-    private Set<Performance> performances;
+    private Set<Integer> clubs;
+    private Set<Integer> performances;
 
-    public Match(int matchWeek, Date date, int hostResult, int awayResult, String venue) {
+    public Match(int matchWeek, String date, int hostResult, int awayResult, String venue) {
         this.matchWeek = matchWeek;
         this.date = date;
         this.hostResult = hostResult;
@@ -38,7 +42,7 @@ public class Match {
         if (clubs == null) {
             clubs = new HashSet<>();
         }
-        clubs.add(tempClub);
+        clubs.add(tempClub.getClubId());
         //tempClub.setMatch(this.getMatchId());
     }
 
@@ -46,7 +50,7 @@ public class Match {
         if (performances == null) {
             performances = new HashSet<>();
         }
-        performances.add(tempPerformance);
+        performances.add(tempPerformance.getPerformanceId());
         tempPerformance.setMatch(this.getMatchId());
     }
 }
