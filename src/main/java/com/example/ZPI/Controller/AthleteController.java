@@ -3,8 +3,12 @@ package com.example.ZPI.Controller;
 import com.example.ZPI.Service.AthleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -21,5 +25,12 @@ public class AthleteController {
     @GetMapping("/athleteDetails")
     public ResponseEntity<?> athleteDetails(@RequestParam int athleteId){
         return ResponseEntity.ok(athleteService.getAthlete(athleteId));
+    }
+
+    @GetMapping("/teamAthletes")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> teamAthletes(Principal principal) {
+        String username = principal.getName();
+        return ResponseEntity.ok(athleteService.getTeamAthletes(username));
     }
 }
