@@ -26,6 +26,7 @@ public class TeamService {
     public static final int CANNOT_BUY_FOREIGNER = 10;
     public static final int TEAM_IS_FULL = 11;
     public static final int ATHLETE_IS_IN_A_TEAM = 12;
+    public static final int ATHLETE_IS_NOT_IN_A_TEAM = 13;
 
     @Autowired
     TeamRepository teamRepository;
@@ -125,7 +126,20 @@ public class TeamService {
         Athlete athlete = athleteOpt.get();
         User user = userOpt.get();
 
-        return 0;
+        if (user.getTeam() == null) return NO_TEAM_OWNED_BY_USER;
+
+        Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
+
+        if (!teamOpt.isPresent()) return TEAM_NOT_FOUND;
+
+        Team team = teamOpt.get();
+
+        if(!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
+
+        team.removeAthlete(athlete);
+        if (teamRepository.update(team)) return STATUS_OK;
+
+        return FAILED;
     }
 
 }
