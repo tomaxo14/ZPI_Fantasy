@@ -72,6 +72,30 @@ public class TeamController {
         }
     }
 
+    @PostMapping("/sell")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> sellAthlete(Principal principal,
+                                        @RequestParam int athleteId){
+        int status = teamService.sellAthlete(principal.getName(), athleteId);
+
+        switch (status) {
+                case TeamService.STATUS_OK:
+                    return ResponseEntity.ok("Zawodnik został sprzedany.");
+                case TeamService.USER_NOT_FOUND:
+                    return ResponseEntity.ok("Aby stworzyć drużynę należy się zalogować.");
+                case TeamService.ATHLETE_NOT_FOUND:
+                    return ResponseEntity.ok("Nie znaleziono zawodnika.");
+                case TeamService.NO_TEAM_OWNED_BY_USER:
+                    return ResponseEntity.ok("Aby sprzedać zawodnika, należy najpierw założyć drużynę.");
+                case TeamService.TEAM_NOT_FOUND:
+                    return ResponseEntity.ok("Nie znaleziono drużyny.");
+                case TeamService.ATHLETE_IS_NOT_IN_A_TEAM:
+                    return ResponseEntity.ok("Nie możesz sprzedać zawodnika którego nie masz w drużynie.");
+                default:
+                    return ResponseEntity.badRequest().body("Nie udało się sprzedać zawodnika");
+        }
+    }
+
 
 
 }

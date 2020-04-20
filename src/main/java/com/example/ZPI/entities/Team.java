@@ -43,6 +43,11 @@ public class Team {
         budget = budget - tempAthlete.getValue();
     }
 
+    public void removeAthlete(Athlete tempAthlete){
+        athletes.remove(tempAthlete);
+        budget = budget + tempAthlete.getValue();
+    }
+
     @Override
     public int hashCode() {
         return ((Integer)teamId).hashCode();
