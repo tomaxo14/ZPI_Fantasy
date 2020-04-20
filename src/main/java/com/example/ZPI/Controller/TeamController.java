@@ -72,6 +72,15 @@ public class TeamController {
         }
     }
 
+    @PostMapping("/sell")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> sellAthlete(Principal principal,
+                                        @RequestParam int athleteId){
+
+
+        return null;
+    }
+
 
 
 }

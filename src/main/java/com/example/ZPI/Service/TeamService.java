@@ -114,4 +114,18 @@ public class TeamService {
         return FAILED;
     }
 
+    public int sellAthlete(String username, int athleteId) {
+
+        Optional<User> userOpt = userService.getUser(username);
+        Optional<Athlete> athleteOpt = athleteService.getAthlete(athleteId);
+
+        if (!userOpt.isPresent()) return USER_NOT_FOUND;
+        if (!athleteOpt.isPresent()) return ATHLETE_NOT_FOUND;
+
+        Athlete athlete = athleteOpt.get();
+        User user = userOpt.get();
+
+        return 0;
+    }
+
 }
