@@ -1,6 +1,7 @@
 package com.example.ZPI.Service;
 
 import com.example.ZPI.Model.AthleteDetailsResponse;
+import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +40,22 @@ public class AthleteService {
         return athleteRepository.findAll();
     }
 
-    public Set<Athlete> getTeamAthletes(String username) {
+    public TeamAthletesResponse getTeamAthletes(String username) {
+
+        boolean hasTeam = true;
 
         Optional<User> userOpt = userService.getUser(username);
         User user = userOpt.get();
 
-        Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
-        Team team = teamOpt.get();
-
-        return team.getAthletes();
+        Team team;
+        if(user.getTeam()==null){
+            hasTeam=false;
+            return new TeamAthletesResponse(new HashSet<>() , hasTeam);
+        }else {
+            Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
+            team = teamOpt.get();
+            return new TeamAthletesResponse(team.getAthletes(), hasTeam);
+        }
     }
 
     public Optional<Athlete> getAthlete(int id) {
