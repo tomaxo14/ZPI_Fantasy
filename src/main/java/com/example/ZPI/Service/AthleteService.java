@@ -4,6 +4,7 @@ import com.example.ZPI.Model.AthleteDetailsResponse;
 import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.entities.*;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,19 @@ public class AthleteService {
     @Autowired
     UserService userService;
 
-    public List<Athlete> getAllAthletes() {
-        return athleteRepository.findAll();
+    public List<Pair<Athlete, String>> getAllAthletes() {
+        ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
+        List<Athlete>athleteList = athleteRepository.findAll();
+
+        //pobieranie nazwy klubu każdego sportowca
+        for(Athlete athlete : athleteList){
+            Optional<Club>clubOpt = clubRepository.findById(athlete.getClub());
+            Club club = clubOpt.get();
+            Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
+            pairList.add(pair);
+        }
+
+        return pairList;
     }
 
     public TeamAthletesResponse getTeamAthletes(String username) {
@@ -47,14 +59,24 @@ public class AthleteService {
         Optional<User> userOpt = userService.getUser(username);
         User user = userOpt.get();
 
+        ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
+
+
         Team team;
         if(user.getTeam()==null){
             hasTeam=false;
-            return new TeamAthletesResponse(new HashSet<>() , hasTeam);
+            return new TeamAthletesResponse(new ArrayList<>() , hasTeam);
         }else {
             Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
             team = teamOpt.get();
-            return new TeamAthletesResponse(team.getAthletes(), hasTeam);
+            Set<Athlete> athletes = team.getAthletes();
+            for(Athlete athlete : athletes){
+                Optional<Club>clubOpt = clubRepository.findById(athlete.getClub());
+                Club club = clubOpt.get();
+                Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
+                pairList.add(pair);
+            }
+            return new TeamAthletesResponse(pairList, hasTeam);
         }
     }
 
