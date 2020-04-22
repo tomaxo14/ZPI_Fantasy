@@ -69,6 +69,7 @@ public class AthleteService {
 
         Optional<Club> clubOpt = clubRepository.findById(athlete.getClub());
         Club club = clubOpt.get();
+        String clubName = club.getName();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -116,6 +117,6 @@ public class AthleteService {
             }
         }
 
-        return new AthleteDetailsResponse(athlete, nextMatch, lastPerformance);
+        return new AthleteDetailsResponse(athlete, nextMatch, lastPerformance, clubName);
     }
 }
