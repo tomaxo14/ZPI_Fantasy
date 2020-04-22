@@ -37,6 +37,9 @@ public class TeamService {
     @Autowired
     AthleteService athleteService;
 
+    @Autowired
+    CounterService counterService;
+
     public int createTeam(String username, String teamName) {
 
         Optional<User> userOpt = userService.getUser(username);
@@ -48,7 +51,7 @@ public class TeamService {
         User user = userOpt.get();
         if (user.getTeam() != null) return USER_ALREADY_OWNS_A_TEAM;
 
-        Team team = new Team(teamName);
+        Team team = new Team(counterService.getNextId("team"), teamName);
         team = teamRepository.save(team);
         userService.updateTeam(user, team.getTeamId());
         return STATUS_OK;
