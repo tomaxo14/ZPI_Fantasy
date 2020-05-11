@@ -18,23 +18,34 @@ public class MatchController {
     @Autowired
     MatchService matchService;
 
-    //TODO add @RequestParam String filepath
     @PostMapping("/addMatch")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createTeam(Principal principal, @RequestParam String filepath) {
-
-//        String filepath = "D:\\STUDIA\\ZPI\\matches\\mecz.txt";
+    public ResponseEntity<?> addMatch(Principal principal, @RequestParam String filepath) {
 
         switch (matchService.addMatch(filepath)) {
             case MatchService.CLUB_NOT_FOUND:
-                return ResponseEntity.ok("Nie odnaleziono drużyny.");
+                return ResponseEntity.ok("Nie odnaleziono klubu.");
             case MatchService.ATHLETE_NOT_FOUND:
                 return ResponseEntity.ok("Nie odnaleziono zawodnika.");
             default:
                 return ResponseEntity.ok("Pomyślnie wczytano mecz.");
 
         }
+    }
 
+    @PostMapping("/updateClubMatches")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> updateClubMatches(Principal principal) {
 
+        int updated = matchService.updateClubMatches();
+        return ResponseEntity.ok("Liczba dodanych meczów do klubów: " + updated);
+    }
+
+    @PostMapping("/removeClubMatches")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> removeClubMatches(Principal principal) {
+
+        matchService.removeClubMatches();
+        return ResponseEntity.ok("Usunięto mecze klubów.");
     }
 }

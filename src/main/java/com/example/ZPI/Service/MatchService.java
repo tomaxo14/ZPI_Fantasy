@@ -39,6 +39,36 @@ public class MatchService {
     @Autowired
     TeamService teamService;
 
+    public void removeClubMatches() {
+        List<Match> matches = matchRepository.findAll();
+        for (Match match : matches) {
+            for (Club club : match.getClubs()) {
+                Optional<Club> dbClub = clubRepository.findById(club.getClubId());
+                dbClub.ifPresent(value -> {
+                    value.setMatches(new HashSet<>());
+                    clubRepository.update(dbClub.get());
+                });
+            }
+        }
+    }
+
+    public int updateClubMatches() {
+        int counter = 0;
+        List<Match> matches = matchRepository.findAll();
+        for (Match match : matches) {
+            for (Club club : match.getClubs()) {
+                Optional<Club> dbClub = clubRepository.findById(club.getClubId());
+                if(dbClub.isPresent() && !dbClub.get().getMatches().contains(match)) {
+                    dbClub.get().addMatch(match);
+                    clubRepository.update(dbClub.get());
+                    counter++;
+                }
+            }
+        }
+
+        return counter;
+    }
+
     public int addMatch(String filepath) {
         System.out.println(" - - MatchService.addMatch() - - ");
         PreparedMatch preparedMatch = MatchLoader.loadMatch(filepath);
@@ -65,7 +95,6 @@ public class MatchService {
             if (athlete.isPresent()) {
                 Performance performance = entry.getValue();
                 performances.add(performance);
-//                athlete.get().addPerformance(performance);
                 athletes.add(athlete.get());
             } else {
                 System.out.println("Nie znaleziono zawodnika: " + entry.getKey());
@@ -81,7 +110,7 @@ public class MatchService {
         System.out.println(athletes);
 
 //         add performances
-        for(int i = 0; i<performances.size(); i++) {
+        for (int i = 0; i < performances.size(); i++) {
             Performance addedPerformance = performanceService.addPerformance(performances.get(i));
             athletes.get(i).addPerformance(addedPerformance);
             athleteRepository.update(athletes.get(i));
@@ -91,9 +120,17 @@ public class MatchService {
         match.setMatchId(counterService.getNextId("match"));
         matchRepository.save(match);
 
+        for (Club club : match.getClubs()) {
+            Optional<Club> dbClub = clubRepository.findById(club.getClubId());
+            if(dbClub.isPresent()) {
+                dbClub.get().addMatch(match);
+                clubRepository.update(dbClub.get());
+            }
+        }
+
         List<Team> teams = teamRepository.findAll();
-        for(Team team : teams) {
-            for(Athlete athlete : athletes) {
+        for (Team team : teams) {
+            for (Athlete athlete : athletes) {
                 if (team.getAthletes().contains(athlete)) {
                     Team updated = team;
                     updated.updateAthlete(athlete);

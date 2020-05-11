@@ -21,6 +21,7 @@ public class MatchLoader {
         try {
             br = new BufferedReader(new FileReader(file));
             String line;
+            line = br.readLine();   // first empty
             line = br.readLine();   // matchWeek
             match.setMatchWeek(Integer.valueOf(line));
             String date = br.readLine();   // date

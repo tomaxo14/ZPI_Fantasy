@@ -61,4 +61,14 @@ public class Match {
                 ", performances=" + performances +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return matchId == ((Match) o).getMatchId();
+    }
+
+    @Override
+    public int hashCode() {
+        return ((Integer) matchId).hashCode();
+    }
 }

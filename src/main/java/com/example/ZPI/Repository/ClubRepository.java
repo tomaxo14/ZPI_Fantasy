@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface ClubRepository extends MongoRepository<Club, Integer> {
+public interface ClubRepository extends MongoRepository<Club, Integer>, ClubRepositoryCustom {
 
     List<Club> findAll();
 
