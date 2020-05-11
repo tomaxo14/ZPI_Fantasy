@@ -19,8 +19,6 @@ import java.util.Set;
 public class Athlete {
     public enum Category {senior, junior, obcokrajowiec}
 
-    ;
-
     @Id
     private int athleteId;
 
@@ -32,8 +30,7 @@ public class Athlete {
     private int points;
 
     private int club;
-    private Set<Integer> performances;
-    private Set<Team> teams;
+    private Set<Performance> performances;
     private ETeamRole teamRole;
 
     public Athlete(String firstName, String surname, String nationality, float value, String category) {
@@ -48,16 +45,23 @@ public class Athlete {
         if (performances == null) {
             performances = new HashSet<>();
         }
-        performances.add(tempPerformance.getPerformanceId());
-        tempPerformance.setAthlete(this.getAthleteId());
+        performances.add(tempPerformance);
     }
 
-    public void addTeam(Team tempTeam) {
-        if (teams == null) {
-            teams = new HashSet<>();
-        }
-        teams.add(tempTeam);
-        //tempTeam.setAthlete(this.getAthleteId());
+    @Override
+    public String toString() {
+        return "Athlete{" +
+                "athleteId=" + athleteId +
+                ", firstName='" + firstName + '\'' +
+                ", surname='" + surname + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", value=" + value +
+                ", category=" + category +
+                ", points=" + points +
+                ", club=" + club +
+                ", performances=" + performances +
+                ", teamRole=" + teamRole +
+                '}';
     }
 
     @Override

@@ -7,9 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,24 +23,22 @@ public class Match {
     private String date;
     private int hostResult;
     private int awayResult;
-    private String venue;
 
-    private Set<Integer> clubs;
+    private Club[] clubs;
     private Set<Integer> performances;
 
-    public Match(int matchWeek, String date, int hostResult, int awayResult, String venue) {
+    public Match(int matchWeek, String date, int hostResult, int awayResult) {
         this.matchWeek = matchWeek;
         this.date = date;
         this.hostResult = hostResult;
         this.awayResult = awayResult;
-        this.venue = venue;
     }
 
-    public void addClub(Club tempClub) {
+    public void setClub(int index, Club tempClub) {
         if (clubs == null) {
-            clubs = new HashSet<>();
+            clubs = new Club[2];
         }
-        clubs.add(tempClub.getClubId());
+        clubs[index] = tempClub;
         //tempClub.setMatch(this.getMatchId());
     }
 
@@ -51,6 +47,18 @@ public class Match {
             performances = new HashSet<>();
         }
         performances.add(tempPerformance.getPerformanceId());
-        tempPerformance.setMatch(this.getMatchId());
+    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "matchId=" + matchId +
+                ", matchWeek=" + matchWeek +
+                ", date='" + date + '\'' +
+                ", hostResult=" + hostResult +
+                ", awayResult=" + awayResult +
+                ", clubs=" + Arrays.toString(clubs) +
+                ", performances=" + performances +
+                '}';
     }
 }

@@ -19,7 +19,7 @@ public class Club {
     private String name;
     private String city;
 
-    private Set<Athlete> athletes;
+    private Set<Integer> athletes;
     private Set<Match> matches;
 
     public Club(String name, String city) {
@@ -31,7 +31,7 @@ public class Club {
         if (athletes == null) {
             athletes = new HashSet<>();
         }
-        athletes.add(tempAthlete);
+        athletes.add(tempAthlete.getAthleteId());
         tempAthlete.setClub(this.getClubId());
     }
 
@@ -43,4 +43,11 @@ public class Club {
         //tempMatch.setClub(this.getClubId());
     }
 
+    @Override
+    public String toString() {
+        return "Club{" +
+                "clubId=" + clubId +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

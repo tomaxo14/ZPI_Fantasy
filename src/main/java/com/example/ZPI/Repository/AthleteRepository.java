@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AthleteRepository extends MongoRepository<Athlete, Integer> {
+public interface AthleteRepository extends MongoRepository<Athlete, Integer>, AthleteRepositoryCustom {
 
     List<Athlete> findAll();
 
     @Override
     Optional<Athlete> findById(Integer id);
+
+    Optional<Athlete> findByFirstNameContainsAndSurnameContains(String firstName, String lastName);
 
     List<Athlete> findAllByFirstNameContainsAndSurnameContainsAndNationalityContainsAndAndCategory(String firstName, String surname, String nationality, Athlete.Category category);
 

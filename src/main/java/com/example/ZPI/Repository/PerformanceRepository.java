@@ -16,8 +16,4 @@ public interface PerformanceRepository extends MongoRepository<Performance, Inte
     @Override
     Optional<Performance> findById(Integer id);
 
-    List<Performance> findAllByAthlete(int athleteId);
-
-    List<Performance> findAllByMatch(int matchId);
-
 }

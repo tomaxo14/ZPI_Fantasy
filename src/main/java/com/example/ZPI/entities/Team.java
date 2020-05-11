@@ -55,6 +55,11 @@ public class Team {
         budget = budget - tempAthlete.getValue();
     }
 
+    public void updateAthlete(Athlete athlete) {
+        athletes.remove(athlete);
+        athletes.add(athlete);
+    }
+
     public void removeAthlete(Athlete tempAthlete){
         athletes.remove(tempAthlete);
         budget = budget + tempAthlete.getValue();

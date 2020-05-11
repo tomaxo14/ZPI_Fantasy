@@ -14,6 +14,8 @@ public interface ClubRepository extends MongoRepository<Club, Integer> {
     @Override
     Optional<Club> findById(Integer id);
 
+    Optional<Club> findByNameContains(String name);
+
     List<Club> findAllByNameContains(String name);
 
 }

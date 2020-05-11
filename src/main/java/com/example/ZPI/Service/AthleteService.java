@@ -4,7 +4,6 @@ import com.example.ZPI.Model.AthleteDetailsResponse;
 import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.entities.*;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -121,23 +120,15 @@ public class AthleteService {
             }
         }
 
-        Set<Integer>performancesId = athlete.getPerformances();
-        Set<Performance>performances = new HashSet<>();
-
-        for(int id : performancesId){
-            Optional<Performance> performanceOpt = performanceRepository.findById(id);
-            Performance performance = performanceOpt.get();
-            performances.add(performance);
-        }
+        Set<Performance>performances = athlete.getPerformances();
 
         String lastPerformanceDate = "1900-01-01";
         System.out.println(lastPerformanceDate);
         Performance lastPerformance=null;
+        // TODO do sprawdzenia
         for(Performance performance : performances){
-            Optional<Match> matchOpt = matchRepository.findById(performance.getMatch());
-            Match match = matchOpt.get();
-            if(match.getDate().compareTo(actualDate)<=0 && match.getDate().compareTo(lastPerformanceDate)>0){
-                lastPerformanceDate = match.getDate();
+            if(performance.getDate().compareTo(actualDate)<=0 && performance.getDate().compareTo(lastPerformanceDate)>0){
+                lastPerformanceDate = performance.getDate();
                 lastPerformance = performance;
             }
         }
