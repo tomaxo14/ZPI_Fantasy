@@ -39,6 +39,24 @@ public class TeamController {
         }
     }
 
+    @PostMapping("/resetTeam")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> createTeam(Principal principal) {
+
+        int status = teamService.resetTeam(principal.getName());
+
+        switch (status) {
+            case TeamService.STATUS_OK:
+                return ResponseEntity.ok("Drużyna została zresetowana.");
+            case TeamService.USER_NOT_FOUND:
+                return ResponseEntity.ok("Aby stworzyć drużynę należy się zalogować.");
+            case TeamService.NO_TEAM_OWNED_BY_USER:
+                return ResponseEntity.ok("Nie posiadasz żadnej drużyny.");
+            default:
+                return ResponseEntity.badRequest().body("Nie udało się zresetować drużyny.");
+        }
+    }
+
     @PostMapping("/buy")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> buyAthlete(Principal principal,

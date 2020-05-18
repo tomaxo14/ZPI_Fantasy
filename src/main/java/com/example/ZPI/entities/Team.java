@@ -10,8 +10,10 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static com.example.ZPI.entities.ETeamRole.*;
+import static com.example.ZPI.entities.ETeamRole.REGULAR;
 
 @Getter
 @Setter
@@ -47,9 +49,45 @@ public class Team {
         this.points = 0;
     }
 
+    public void reset() {
+        this.budget = DEFAULT_BUDGET;
+        this.athletes = new HashSet<>();
+        this.points = 0;
+    }
+
     public void addAthlete(Athlete tempAthlete) {
         if (athletes == null) {
             athletes = new HashSet<>();
+        }
+
+        int countRegular = 0;
+        List<ETeamRole> emptySub = new ArrayList<>();
+        emptySub.add(SUB1);
+        emptySub.add(SUB2);
+        emptySub.add(SUB3);
+        for (Athlete athlete : athletes) {
+            switch (athlete.getTeamRole()) {
+                case REGULAR:
+                case CAPTAIN:
+                case VICE:
+                    countRegular++;
+                    break;
+                case SUB1:
+                    emptySub.remove(SUB1);
+                    break;
+                case SUB2:
+                    emptySub.remove(SUB2);
+                    break;
+                case SUB3:
+                    emptySub.remove(SUB3);
+                    break;
+            }
+        }
+
+        if (countRegular < 7) {
+            tempAthlete.setTeamRole(REGULAR);
+        } else if (!emptySub.isEmpty()) {
+            tempAthlete.setTeamRole(emptySub.get(0));
         }
         athletes.add(tempAthlete);
         budget = budget - tempAthlete.getValue();
@@ -60,18 +98,18 @@ public class Team {
         athletes.add(athlete);
     }
 
-    public void removeAthlete(Athlete tempAthlete){
+    public void removeAthlete(Athlete tempAthlete) {
         athletes.remove(tempAthlete);
         budget = budget + tempAthlete.getValue();
     }
 
     @Override
     public int hashCode() {
-        return ((Integer)teamId).hashCode();
+        return ((Integer) teamId).hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return teamId==((Team)obj).getTeamId();
+        return teamId == ((Team) obj).getTeamId();
     }
 }
