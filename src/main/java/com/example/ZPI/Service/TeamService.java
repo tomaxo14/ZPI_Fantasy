@@ -59,6 +59,22 @@ public class TeamService {
         return STATUS_OK;
     }
 
+    public int resetTeam(String username) {
+        Optional<User> userOpt = userService.getUser(username);
+        if (!userOpt.isPresent()) return USER_NOT_FOUND;
+        User user = userOpt.get();
+
+        if (user.getTeam() == null) return NO_TEAM_OWNED_BY_USER;
+        Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
+        if (!teamOpt.isPresent()) return TEAM_NOT_FOUND;
+        Team team = teamOpt.get();
+        team.reset();
+
+        if (teamRepository.update(team)) return STATUS_OK;
+
+        return FAILED;
+    }
+
     public int buyAthlete(String username, int athleteId) {
         Optional<User> userOpt = userService.getUser(username);
         Optional<Athlete> athleteOpt = athleteService.getAthlete(athleteId);
