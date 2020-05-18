@@ -109,7 +109,9 @@ public class AthleteService {
 
         Set<Match>matches = club.getMatches();
 
-        String actualDate = dateFormat.format(new Date());
+        //aktualna data
+//        String actualDate = dateFormat.format(new Date());
+        String actualDate = "2019-04-10";
         String closestDate = dateFormat.format(new Date(Long.MAX_VALUE));
         Match nextMatch=null;
 
