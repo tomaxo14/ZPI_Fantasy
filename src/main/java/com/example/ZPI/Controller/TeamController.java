@@ -98,6 +98,33 @@ public class TeamController {
         }
     }
 
+    @PostMapping("/setRole")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> setRole(Principal principal,
+                                         @RequestParam int athleteId, @RequestParam int role){
+
+        int status = teamService.setRole(principal.getName(), athleteId, role);
+        switch (status) {
+            case TeamService.STATUS_OK:
+                return ResponseEntity.ok("Zmieniono rolę zawodnikowi.");
+            case TeamService.USER_NOT_FOUND:
+                return ResponseEntity.ok("Aby stworzyć drużynę należy się zalogować.");
+            case TeamService.ATHLETE_NOT_FOUND:
+                return ResponseEntity.ok("Nie znaleziono zawodnika.");
+            case TeamService.NO_TEAM_OWNED_BY_USER:
+                return ResponseEntity.ok("Aby zmienić rolę zawodnika, należy najpierw założyć drużynę.");
+            case TeamService.TEAM_NOT_FOUND:
+                return ResponseEntity.ok("Nie znaleziono drużyny.");
+            case TeamService.ATHLETE_IS_NOT_IN_A_TEAM:
+                return ResponseEntity.ok("Nie możesz zmienić roli zawodnika którego nie masz w drużynie.");
+                case TeamService.BAD_ROLE_NUMBER:
+                    return ResponseEntity.ok("Nie ma takiej roli.");
+            default:
+                return ResponseEntity.badRequest().body("Nie udało się zmienić roli zawodnikowi");
+
+        }
+    }
+
 
 
 }

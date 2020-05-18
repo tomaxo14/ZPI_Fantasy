@@ -5,5 +5,6 @@ public enum ETeamRole {
     CAPTAIN,
     VICE,
     SUB1,
-    SUB2
+    SUB2,
+    SUB3
 }
