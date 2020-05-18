@@ -7,10 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.text.ParseException;
 
 @Controller
 @CrossOrigin
@@ -47,5 +49,10 @@ public class MatchController {
 
         matchService.removeClubMatches();
         return ResponseEntity.ok("Usunięto mecze klubów.");
+    }
+
+    @GetMapping("/results")
+    public ResponseEntity<?> matchWeekResults(@RequestParam int matchWeek) throws ParseException {
+        return ResponseEntity.ok(matchService.matchWeekResults(matchWeek));
     }
 }

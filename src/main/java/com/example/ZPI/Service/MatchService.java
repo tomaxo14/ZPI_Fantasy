@@ -141,4 +141,8 @@ public class MatchService {
 
         return STATUS_OK;
     }
+
+    public List<Match> matchWeekResults(int matchWeek){
+        return matchRepository.findAllByMatchWeek(matchWeek);
+    }
 }
