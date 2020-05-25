@@ -29,6 +29,15 @@ public class TeamService {
     public static final int ATHLETE_IS_IN_A_TEAM = 12;
     public static final int ATHLETE_IS_NOT_IN_A_TEAM = 13;
     public static final int BAD_ROLE_NUMBER = 14;
+    public static final int CANNOT_CHANGE_SENIOR_FOREIGNER = 15;
+    public static final int CANNOT_CHANGE_SENIOR_JUNIOR = 16;
+    public static final int CANNOT_CHANGE_FOREIGNER_JUNIOR = 17;
+    public static final int CANNOT_CHANGE_JUNIOR_SENIOR = 18;
+    public static final int CANNOT_CHANGE_JUNIOR_FOREIGNER = 19;
+    public static final int CANNOT_CHANGE_SUB_SUB3 = 20;
+    public static final int CANNOT_MAKE_SUB_CAPTAIN = 21;
+    public static final int CANNOT_MAKE_SUB_VICE = 22;
+
 
     @Autowired
     TeamRepository teamRepository;
@@ -190,31 +199,150 @@ public class TeamService {
 
         if (!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
 
+        for (Athlete teamAthlete : team.getAthletes()) {
+            if(teamAthlete.getAthleteId()==athleteId && (teamAthlete.getTeamRole()==ETeamRole.SUB1 || teamAthlete.getTeamRole()==ETeamRole.SUB2 || teamAthlete.getTeamRole()==ETeamRole.SUB3)){
+                if(role==1){
+                    return CANNOT_MAKE_SUB_CAPTAIN;
+                }else if(role ==2){
+                    return CANNOT_MAKE_SUB_VICE;
+                }
+            }
+        }
+
         //Athlete athleteInTeam = team.getAthletes().;
-        team.getAthletes().remove(athlete);
-        switch (role) {
+        //team.getAthletes().remove(athlete);
+        switch (role){
             case 1:
-                athlete.setTeamRole(ETeamRole.REGULAR);
+                for (Athlete teamAthlete : team.getAthletes()) {
+                    if(teamAthlete.getTeamRole()==ETeamRole.CAPTAIN){
+                        teamAthlete.setTeamRole(ETeamRole.REGULAR);
+                    }
+                }
+                for (Athlete teamAthlete : team.getAthletes()) {
+                    if(teamAthlete.getAthleteId()==athleteId){
+                        teamAthlete.setTeamRole(ETeamRole.CAPTAIN);
+                    }
+                }
                 break;
             case 2:
-                athlete.setTeamRole(ETeamRole.SUB1);
-                break;
-            case 3:
-                athlete.setTeamRole(ETeamRole.SUB2);
-                break;
-            case 4:
-                athlete.setTeamRole(ETeamRole.SUB3);
-                break;
-            case 5:
-                athlete.setTeamRole(ETeamRole.CAPTAIN);
-                break;
-            case 6:
-                athlete.setTeamRole(ETeamRole.VICE);
+                for (Athlete teamAthlete : team.getAthletes()) {
+                    if(teamAthlete.getTeamRole()==ETeamRole.VICE){
+                        teamAthlete.setTeamRole(ETeamRole.REGULAR);
+                    }
+                }
+                for (Athlete teamAthlete : team.getAthletes()) {
+                    if(teamAthlete.getAthleteId()==athleteId){
+                        teamAthlete.setTeamRole(ETeamRole.VICE);
+                    }
+                }
                 break;
             default:
                 return BAD_ROLE_NUMBER;
         }
-        team.getAthletes().add(athlete);
+        //team.getAthletes().add(athlete);
+        if (teamRepository.update(team)) return STATUS_OK;
+
+        return FAILED;
+    }
+
+    public int setSub(String username, int regularId, int subId) {
+
+        Optional<User> userOpt = userService.getUser(username);
+        if (!userOpt.isPresent()) return USER_NOT_FOUND;
+        User user = userOpt.get();
+
+        if (user.getTeam() == null) return NO_TEAM_OWNED_BY_USER;
+        Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
+
+        if (!teamOpt.isPresent()) return TEAM_NOT_FOUND;
+        Team team = teamOpt.get();
+
+        Optional<Athlete> regularOpt = athleteService.getAthlete(regularId);
+        if (!regularOpt.isPresent()) return ATHLETE_NOT_FOUND;
+        Athlete regular = null;
+
+        Optional<Athlete> subOpt = athleteService.getAthlete(subId);
+        if (!subOpt.isPresent()) return ATHLETE_NOT_FOUND;
+        Athlete sub = null;
+
+        for (Athlete teamAthlete : team.getAthletes()) {
+            if(teamAthlete.getAthleteId()==regularId){
+                regular=teamAthlete;
+            }
+            if(teamAthlete.getAthleteId()==subId){
+                sub=teamAthlete;
+            }
+        }
+
+        //sprawdzenie czy nie zamieniamy rezerwowych z rezerwowym juniorem
+        if(((regular.getTeamRole()==ETeamRole.SUB1||regular.getTeamRole()==ETeamRole.SUB2) && regular.getTeamRole()==ETeamRole.SUB3)
+            ||(regular.getTeamRole()==ETeamRole.SUB3&&(regular.getTeamRole()==ETeamRole.SUB1||regular.getTeamRole()==ETeamRole.SUB2))){
+            return CANNOT_CHANGE_SUB_SUB3;
+        }
+
+        //liczba seniorów w pierwszym składzie
+        int countSenior = 0;
+
+        for (Athlete teamAthlete : team.getAthletes()) {
+            if((teamAthlete.getTeamRole()==ETeamRole.REGULAR || teamAthlete.getTeamRole()==ETeamRole.CAPTAIN || teamAthlete.getTeamRole()==ETeamRole.VICE)&&teamAthlete.getCategory()== Athlete.Category.senior) {
+                        countSenior++;
+            }
+        }
+
+        //sprawdzenie czy regular jest w pierwszym składzie czy zmieniamy rezerwowych miedzy sobą
+        if(regular.getTeamRole()==ETeamRole.REGULAR || regular.getTeamRole()==ETeamRole.CAPTAIN || regular.getTeamRole()==ETeamRole.VICE) {
+            //sprawdzenie warunków zmiany roli
+            switch (regular.getCategory()) {
+                case senior:
+                    switch (sub.getCategory()) {
+                        case obcokrajowiec:
+                            if (countSenior <= 2) {
+                                return CANNOT_CHANGE_SENIOR_FOREIGNER;
+                            }
+                            break;
+                        case junior:
+                            return CANNOT_CHANGE_SENIOR_JUNIOR;
+                    }
+                    break;
+                case obcokrajowiec:
+                    if (sub.getCategory()== Athlete.Category.junior) {
+                            return CANNOT_CHANGE_FOREIGNER_JUNIOR;
+                    }
+                    break;
+                case junior:
+                    switch (sub.getCategory()) {
+                        case senior:
+                            return CANNOT_CHANGE_JUNIOR_SENIOR;
+                        case obcokrajowiec:
+                            return CANNOT_CHANGE_JUNIOR_FOREIGNER;
+                    }
+                    break;
+            }
+        }
+
+        ETeamRole tempRegularRole=null;
+        ETeamRole tempSubRole = null;
+
+        //pobranie roli obu zawodników
+        for(Athlete teamAthlete : team.getAthletes()){
+            if(teamAthlete.getAthleteId()==regularId){
+                tempRegularRole = teamAthlete.getTeamRole();
+            }
+            if(teamAthlete.getAthleteId()==subId){
+                tempSubRole = teamAthlete.getTeamRole();
+            }
+        }
+
+        //ustalenie nowych ról
+        for(Athlete teamAthlete : team.getAthletes()){
+            if(teamAthlete.getAthleteId()==regular.getAthleteId()){
+                teamAthlete.setTeamRole(tempSubRole);
+            }
+            if(teamAthlete.getAthleteId()==sub.getAthleteId()){
+                teamAthlete.setTeamRole(tempRegularRole);
+            }
+        }
+
         if (teamRepository.update(team)) return STATUS_OK;
 
         return FAILED;
