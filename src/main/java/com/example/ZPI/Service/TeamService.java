@@ -75,6 +75,15 @@ public class TeamService {
         return FAILED;
     }
 
+    public int deleteTeam(int teamId) {
+        Optional<Team> teamOpt = teamRepository.findById(teamId);
+        if (!teamOpt.isPresent()) return TEAM_NOT_FOUND;
+        Team team = teamOpt.get();
+
+        teamRepository.delete(team);
+        return STATUS_OK;
+    }
+
     public int buyAthlete(String username, int athleteId) {
         Optional<User> userOpt = userService.getUser(username);
         Optional<Athlete> athleteOpt = athleteService.getAthlete(athleteId);
@@ -155,7 +164,7 @@ public class TeamService {
 
         Team team = teamOpt.get();
 
-        if(!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
+        if (!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
 
         team.removeAthlete(athlete);
         if (teamRepository.update(team)) return STATUS_OK;
@@ -163,7 +172,7 @@ public class TeamService {
         return FAILED;
     }
 
-    public int setRole(String username, int athleteId, int role){
+    public int setRole(String username, int athleteId, int role) {
 
         Optional<User> userOpt = userService.getUser(username);
         if (!userOpt.isPresent()) return USER_NOT_FOUND;
@@ -179,11 +188,11 @@ public class TeamService {
         if (!athleteOpt.isPresent()) return ATHLETE_NOT_FOUND;
         Athlete athlete = athleteOpt.get();
 
-        if(!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
+        if (!team.getAthletes().contains(athlete)) return ATHLETE_IS_NOT_IN_A_TEAM;
 
         //Athlete athleteInTeam = team.getAthletes().;
         team.getAthletes().remove(athlete);
-        switch (role){
+        switch (role) {
             case 1:
                 athlete.setTeamRole(ETeamRole.REGULAR);
                 break;
