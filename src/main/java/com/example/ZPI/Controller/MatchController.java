@@ -61,6 +61,6 @@ public class MatchController {
     public ResponseEntity<?> removeMatchesAndPerformances(Principal principal) {
 
         matchService.removeMatchesAndPerformances();
-        return ResponseEntity.ok("Usunięto mecze klubów.");
+        return ResponseEntity.ok("Usunięto mecze i występy.");
     }
 }
