@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.ZPI.Service.UserService.*;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -76,18 +78,41 @@ public class AuthController {
     }
 
     @PostMapping("/changePassword")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> changePassword(Principal principal,
                                             @RequestParam String oldPassword,
                                             @RequestParam String newPassword1,
                                             @RequestParam String newPassword2) {
 
-        boolean changed = userService.updatePassword(principal.getName(), oldPassword, newPassword1, newPassword2);
+        int changed = userService.updatePassword(principal.getName(), oldPassword, newPassword1, newPassword2);
 
-        if(changed) {
-            return ResponseEntity.ok(new MessageResponse("The password was changed successfully."));
-        } else {
-            return ResponseEntity.ok(new MessageResponse("Failed to change password."));
+        switch (changed) {
+            case USER_NOT_FOUND:
+                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - nie znaleziono użytkownika."));
+            case INCORRECT_PASSWORD:
+                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - niepoprawne hasło."));
+            case PASSWORD_NOT_EQUALS:
+                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - hasła nie są identyczne."));
+            default:
+                return ResponseEntity.ok(new MessageResponse("Konto zostało skaskowane."));
+        }
+
+    }
+
+    @PostMapping("/deleteAccount")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> changePassword(Principal principal,
+                                            @RequestParam String password) {
+
+        int deleted = userService.deleteAccount(principal.getName(), password);
+
+        switch (deleted) {
+            case USER_NOT_FOUND:
+                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - nie znaleziono użytkownika."));
+            case INCORRECT_PASSWORD:
+                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - niepoprawne hasło."));
+            default:
+                return ResponseEntity.ok(new MessageResponse("Konto zostało skaskowane."));
         }
     }
 
