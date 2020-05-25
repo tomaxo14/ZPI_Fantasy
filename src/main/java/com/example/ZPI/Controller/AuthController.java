@@ -8,11 +8,13 @@ import com.example.ZPI.Repository.RoleRepository;
 import com.example.ZPI.Repository.UserRepository;
 import com.example.ZPI.Security.JWT.JwtUtils;
 import com.example.ZPI.Security.Services.UserDetailsImpl;
+import com.example.ZPI.Service.UserService;
 import com.example.ZPI.entities.ERole;
 import com.example.ZPI.entities.Role;
 import com.example.ZPI.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +42,9 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -67,6 +73,22 @@ public class AuthController {
                 userDetails.getSurname(),
                 userDetails.getTeam(),
                 roles));
+    }
+
+    @PostMapping("/changePassword")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> changePassword(Principal principal,
+                                            @RequestParam String oldPassword,
+                                            @RequestParam String newPassword1,
+                                            @RequestParam String newPassword2) {
+
+        boolean changed = userService.updatePassword(principal.getName(), oldPassword, newPassword1, newPassword2);
+
+        if(changed) {
+            return ResponseEntity.ok(new MessageResponse("The password was changed successfully."));
+        } else {
+            return ResponseEntity.ok(new MessageResponse("Failed to change password."));
+        }
     }
 
     @PostMapping("/signup")
