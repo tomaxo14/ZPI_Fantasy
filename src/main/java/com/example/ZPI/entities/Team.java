@@ -100,7 +100,7 @@ public class Team {
                 else tempAthlete.setTeamRole(emptySub.get(0));
                 break;
             case senior:
-                if (countRegular - countJunior < 5) tempAthlete.setTeamRole(REGULAR);
+                if (countRegular - countJunior < 5 && countCategory < 5) tempAthlete.setTeamRole(REGULAR);
                 else tempAthlete.setTeamRole(emptySub.get(0));
                 break;
         }
