@@ -88,13 +88,13 @@ public class AuthController {
 
         switch (changed) {
             case USER_NOT_FOUND:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - nie znaleziono użytkownika."));
+                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła- nie znaleziono użytkownika."));
             case INCORRECT_PASSWORD:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - niepoprawne hasło."));
+                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła - niepoprawne hasło."));
             case PASSWORD_NOT_EQUALS:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - hasła nie są identyczne."));
+                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła - hasła nie są identyczne."));
             default:
-                return ResponseEntity.ok(new MessageResponse("Konto zostało skaskowane."));
+                return ResponseEntity.ok(new MessageResponse("Hasło zostało zmienione."));
         }
 
     }

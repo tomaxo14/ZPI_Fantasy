@@ -141,10 +141,10 @@ public class TeamService {
                 if (countJunior == 3) return CANNOT_BUY_JUNIOR;
                 break;
             case obcokrajowiec:
-                if (countForeigner == 4) return CANNOT_BUY_FOREIGNER;
+                if (countForeigner == 4 || countForeigner+countSenior==7) return CANNOT_BUY_FOREIGNER;
                 break;
             case senior:
-                if (countSenior == 6) return CANNOT_BUY_SENIOR;
+                if (countSenior == 7 || countForeigner+countSenior==7) return CANNOT_BUY_SENIOR;
                 break;
         }
 
