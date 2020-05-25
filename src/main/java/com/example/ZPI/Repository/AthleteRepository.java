@@ -25,4 +25,5 @@ public interface AthleteRepository extends MongoRepository<Athlete, Integer>, At
         return findAllByFirstNameContainsAndSurnameContainsAndNationalityContainsAndAndCategory(firstName, surname, nationality, category);
     }
 
+
 }
