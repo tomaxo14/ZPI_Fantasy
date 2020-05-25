@@ -61,11 +61,17 @@ public class Team {
         }
 
         int countRegular = 0;
+        int countCategory = 0;
+        int countJunior = 0;
+
         List<ETeamRole> emptySub = new ArrayList<>();
         emptySub.add(SUB1);
         emptySub.add(SUB2);
         emptySub.add(SUB3);
         for (Athlete athlete : athletes) {
+            if (athlete.getCategory() == tempAthlete.getCategory()) countCategory++;
+            if (athlete.getCategory() == Athlete.Category.junior) countJunior++;
+
             switch (athlete.getTeamRole()) {
                 case REGULAR:
                 case CAPTAIN:
@@ -84,11 +90,21 @@ public class Team {
             }
         }
 
-        if (countRegular < 7) {
-            tempAthlete.setTeamRole(REGULAR);
-        } else if (!emptySub.isEmpty()) {
-            tempAthlete.setTeamRole(emptySub.get(0));
+        switch (tempAthlete.getCategory()) {
+            case junior:
+                if (countRegular < 7 && countJunior < 2) tempAthlete.setTeamRole(REGULAR);
+                else tempAthlete.setTeamRole(SUB3);
+                break;
+            case obcokrajowiec:
+                if (countRegular - countJunior < 5 && countCategory < 3) tempAthlete.setTeamRole(REGULAR);
+                else tempAthlete.setTeamRole(emptySub.get(0));
+                break;
+            case senior:
+                if (countRegular - countJunior < 5) tempAthlete.setTeamRole(REGULAR);
+                else tempAthlete.setTeamRole(emptySub.get(0));
+                break;
         }
+
         athletes.add(tempAthlete);
         budget = budget - tempAthlete.getValue();
     }
