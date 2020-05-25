@@ -55,4 +55,12 @@ public class MatchController {
     public ResponseEntity<?> matchWeekResults(@RequestParam int matchWeek) throws ParseException {
         return ResponseEntity.ok(matchService.matchWeekResults(matchWeek));
     }
+
+    @PostMapping("/removeMatchesAndPerformances")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> removeMatchesAndPerformances(Principal principal) {
+
+        matchService.removeMatchesAndPerformances();
+        return ResponseEntity.ok("Usunięto mecze klubów.");
+    }
 }

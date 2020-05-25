@@ -1,10 +1,7 @@
 package com.example.ZPI.Service;
 
 import com.example.ZPI.Model.PreparedMatch;
-import com.example.ZPI.Repository.AthleteRepository;
-import com.example.ZPI.Repository.ClubRepository;
-import com.example.ZPI.Repository.MatchRepository;
-import com.example.ZPI.Repository.TeamRepository;
+import com.example.ZPI.Repository.*;
 import com.example.ZPI.Utils.MatchLoader;
 import com.example.ZPI.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,9 @@ public class MatchService {
 
     @Autowired
     TeamRepository teamRepository;
+
+    @Autowired
+    PerformanceRepository performanceRepository;
 
     @Autowired
     CounterService counterService;
@@ -144,5 +144,28 @@ public class MatchService {
 
     public List<Match> matchWeekResults(int matchWeek){
         return matchRepository.findAllByMatchWeek(matchWeek);
+    }
+
+    public void removeMatchesAndPerformances() {
+        List<Match> matches = matchRepository.findAll();
+        for (Match match : matches) {
+            for (Club club : match.getClubs()) {
+                Optional<Club> dbClub = clubRepository.findById(club.getClubId());
+                dbClub.ifPresent(value -> {
+                    value.setMatches(new HashSet<>());
+                    clubRepository.update(dbClub.get());
+                });
+            }
+        }
+
+        List<Athlete> athletes = athleteRepository.findAll();
+        for(Athlete athlete : athletes){
+            if(athlete.getPerformances()!=null){
+                athlete.setPerformances(new HashSet<>());
+                athleteRepository.update(athlete);
+            }
+        }
+        List<Performance> performances = performanceRepository.findAll();
+
     }
 }

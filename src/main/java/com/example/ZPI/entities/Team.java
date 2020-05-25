@@ -63,6 +63,7 @@ public class Team {
         int countRegular = 0;
         int countCategory = 0;
         int countJunior = 0;
+        int countJuniorRegular = 0;
 
         List<ETeamRole> emptySub = new ArrayList<>();
         emptySub.add(SUB1);
@@ -71,6 +72,8 @@ public class Team {
         for (Athlete athlete : athletes) {
             if (athlete.getCategory() == tempAthlete.getCategory()) countCategory++;
             if (athlete.getCategory() == Athlete.Category.junior) countJunior++;
+            if (athlete.getCategory() == Athlete.Category.junior && (athlete.getTeamRole()== CAPTAIN
+                    || athlete.getTeamRole()== VICE|| athlete.getTeamRole()== REGULAR)) {countJuniorRegular++;}
 
             switch (athlete.getTeamRole()) {
                 case REGULAR:
@@ -96,11 +99,11 @@ public class Team {
                 else tempAthlete.setTeamRole(SUB3);
                 break;
             case obcokrajowiec:
-                if (countRegular - countJunior < 5 && countCategory < 3) tempAthlete.setTeamRole(REGULAR);
+                if (countRegular - countJuniorRegular < 5 && countCategory < 3) tempAthlete.setTeamRole(REGULAR);
                 else tempAthlete.setTeamRole(emptySub.get(0));
                 break;
             case senior:
-                if (countRegular - countJunior < 5 && countCategory < 5) tempAthlete.setTeamRole(REGULAR);
+                if (countRegular - countJuniorRegular < 5 && countCategory < 5) tempAthlete.setTeamRole(REGULAR);
                 else tempAthlete.setTeamRole(emptySub.get(0));
                 break;
         }
