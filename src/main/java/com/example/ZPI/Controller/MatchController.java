@@ -1,7 +1,6 @@
 package com.example.ZPI.Controller;
 
 import com.example.ZPI.Service.MatchService;
-import com.example.ZPI.Utils.MatchLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,12 +24,14 @@ public class MatchController {
     public ResponseEntity<?> addMatch(Principal principal, @RequestParam String filepath) {
 
         switch (matchService.addMatch(filepath)) {
-            case MatchService.CLUB_NOT_FOUND:
-                return ResponseEntity.ok("Nie odnaleziono klubu.");
-            case MatchService.ATHLETE_NOT_FOUND:
-                return ResponseEntity.ok("Nie odnaleziono zawodnika.");
-            default:
+            case MatchService.STATUS_OK:
                 return ResponseEntity.ok("Pomyślnie wczytano mecz.");
+            case MatchService.CLUB_NOT_FOUND:
+                return ResponseEntity.badRequest().body("Nie odnaleziono klubu.");
+            case MatchService.ATHLETE_NOT_FOUND:
+                return ResponseEntity.badRequest().body("Nie odnaleziono zawodnika.");
+            default:
+                return ResponseEntity.badRequest().body("Nie udało się wczytać meczu.");
 
         }
     }
