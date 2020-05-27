@@ -13,6 +13,7 @@ import com.example.ZPI.entities.ERole;
 import com.example.ZPI.entities.Role;
 import com.example.ZPI.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -87,14 +88,20 @@ public class AuthController {
         int changed = userService.updatePassword(principal.getName(), oldPassword, newPassword1, newPassword2);
 
         switch (changed) {
-            case USER_NOT_FOUND:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła- nie znaleziono użytkownika."));
-            case INCORRECT_PASSWORD:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła - niepoprawne hasło."));
-            case PASSWORD_NOT_EQUALS:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się zmienić hasła - hasła nie są identyczne."));
-            default:
+            case STATUS_OK:
                 return ResponseEntity.ok(new MessageResponse("Hasło zostało zmienione."));
+            case USER_NOT_FOUND:
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się zmienić hasła- nie znaleziono użytkownika."));
+            case INCORRECT_PASSWORD:
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się zmienić hasła - niepoprawne hasło."));
+            case PASSWORD_NOT_EQUALS:
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się zmienić hasła - hasła nie są identyczne."));
+            default:
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się zmienić hasła."));
         }
 
     }
@@ -107,12 +114,18 @@ public class AuthController {
         int deleted = userService.deleteAccount(principal.getName(), password);
 
         switch (deleted) {
+            case STATUS_OK:
+                return ResponseEntity.ok(new MessageResponse("Konto zostało usunięte."));
             case USER_NOT_FOUND:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - nie znaleziono użytkownika."));
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się usunąć konta - nie znaleziono użytkownika."));
             case INCORRECT_PASSWORD:
-                return ResponseEntity.ok(new MessageResponse("Nie udało się usunąć konta - niepoprawne hasło."));
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się usunąć konta - niepoprawne hasło."));
             default:
-                return ResponseEntity.ok(new MessageResponse("Konto zostało skaskowane."));
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Nie udało się usunąć konta hasła."));
+
         }
     }
 
@@ -121,13 +134,13 @@ public class AuthController {
         if (userRepository.existsByLogin(signUpRequest.getLogin())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Podana nazwa użytkownika jest już zajęta."));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("Podany adres email jest już zajęty."));
         }
 
         // Create new user's account
@@ -164,6 +177,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Konto zostało pomyślnie stworzone."));
     }
 }
