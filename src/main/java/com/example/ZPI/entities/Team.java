@@ -95,7 +95,7 @@ public class Team {
 
         switch (tempAthlete.getCategory()) {
             case junior:
-                if (countRegular < 7 && countJunior < 2) tempAthlete.setTeamRole(REGULAR);
+                if (countRegular < 7 && countJuniorRegular < 2) tempAthlete.setTeamRole(REGULAR);
                 else tempAthlete.setTeamRole(SUB3);
                 break;
             case obcokrajowiec:
