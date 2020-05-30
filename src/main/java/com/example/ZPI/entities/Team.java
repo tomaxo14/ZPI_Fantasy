@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.IndexDirection;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.example.ZPI.entities.ETeamRole.*;
-import static com.example.ZPI.entities.ETeamRole.REGULAR;
 
 @Getter
 @Setter
@@ -62,8 +62,8 @@ public class Team {
 
         int countRegular = 0;
         int countCategory = 0;
-        int countJunior = 0;
         int countJuniorRegular = 0;
+        int countForeignerRegular = 0;
 
         List<ETeamRole> emptySub = new ArrayList<>();
         emptySub.add(SUB1);
@@ -71,9 +71,12 @@ public class Team {
         emptySub.add(SUB3);
         for (Athlete athlete : athletes) {
             if (athlete.getCategory() == tempAthlete.getCategory()) countCategory++;
-            if (athlete.getCategory() == Athlete.Category.junior) countJunior++;
-            if (athlete.getCategory() == Athlete.Category.junior && (athlete.getTeamRole()== CAPTAIN
-                    || athlete.getTeamRole()== VICE|| athlete.getTeamRole()== REGULAR)) {countJuniorRegular++;}
+            if (athlete.getCategory() == Athlete.Category.junior
+                    && (athlete.getTeamRole() == CAPTAIN || athlete.getTeamRole() == VICE
+                    || athlete.getTeamRole() == REGULAR)) countJuniorRegular++;
+            if (athlete.getCategory() == Athlete.Category.obcokrajowiec
+                    && (athlete.getTeamRole() == CAPTAIN || athlete.getTeamRole() == VICE
+                    || athlete.getTeamRole() == REGULAR)) countForeignerRegular++;
 
             switch (athlete.getTeamRole()) {
                 case REGULAR:
@@ -99,7 +102,8 @@ public class Team {
                 else tempAthlete.setTeamRole(SUB3);
                 break;
             case obcokrajowiec:
-                if (countRegular - countJuniorRegular < 5 && countCategory < 3) tempAthlete.setTeamRole(REGULAR);
+                if (countRegular - countJuniorRegular < 5 && countCategory < 4
+                        && countForeignerRegular < 3) tempAthlete.setTeamRole(REGULAR);
                 else tempAthlete.setTeamRole(emptySub.get(0));
                 break;
             case senior:
