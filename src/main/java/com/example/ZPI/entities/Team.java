@@ -22,7 +22,7 @@ import static com.example.ZPI.entities.ETeamRole.*;
 @Document(collection = "teams")
 public class Team {
     @Transient
-    private final static float DEFAULT_BUDGET = 100;
+    private final static float DEFAULT_BUDGET = 8;
 
     @Id
     private int teamId;

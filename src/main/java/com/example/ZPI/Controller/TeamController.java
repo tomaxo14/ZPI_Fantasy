@@ -41,7 +41,7 @@ public class TeamController {
 
     @PostMapping("/resetTeam")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<?> createTeam(Principal principal) {
+    public ResponseEntity<?> resetTeam(Principal principal) {
 
         int status = teamService.resetTeam(principal.getName());
 
@@ -81,6 +81,8 @@ public class TeamController {
                 return ResponseEntity.badRequest().body("Posiadasz zbyt mały budżet.");
             case TeamService.TEAM_IS_FULL:
                 return ResponseEntity.badRequest().body("Nie możesz kupić więcej zawodników do drużyny. Aby to zrobić musisz najpierw kogoś sprzedać.");
+            case TeamService.CANNOT_BUY_CLUB:
+                return ResponseEntity.badRequest().body("Nie możesz kupić kolejnego zawodnika z tego klubu. Limit zawodników w drużynie z jednego klubu wynosi 3.");
             case TeamService.CANNOT_BUY_JUNIOR:
                 return ResponseEntity.badRequest().body("Nie możesz kupić kolejnego juniora.");
             case TeamService.CANNOT_BUY_FOREIGNER:

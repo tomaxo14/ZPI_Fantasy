@@ -8,7 +8,9 @@ import com.example.ZPI.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamService {
@@ -37,6 +39,7 @@ public class TeamService {
     public static final int CANNOT_CHANGE_SUB_SUB3 = 20;
     public static final int CANNOT_MAKE_SUB_CAPTAIN = 21;
     public static final int CANNOT_MAKE_SUB_VICE = 22;
+    public static final int CANNOT_BUY_CLUB = 23;
 
 
     @Autowired
@@ -117,6 +120,7 @@ public class TeamService {
         int countJunior = 0;
         int countSenior = 0;
         int countForeigner = 0;
+        int countClub = 0;
 
         if (team.getAthletes() != null) {
             for (Athlete teamAthlete : team.getAthletes()) {
@@ -131,11 +135,15 @@ public class TeamService {
                         countForeigner++;
                         break;
                 }
+
+                if(teamAthlete.getClub()==athlete.getClub()) countClub++;
             }
         }
+
         if (countJunior + countSenior + countForeigner == MAX_ATHLETES_NUMBER) return TEAM_IS_FULL;
 
-        // TODO ZASADY DO SPRAWDZENIA
+        if(countClub==3) return CANNOT_BUY_CLUB;
+
         switch (athlete.getCategory()) {
             case junior:
                 if (countJunior == 3) return CANNOT_BUY_JUNIOR;
@@ -147,6 +155,7 @@ public class TeamService {
                 if (countSenior == 7 || countForeigner+countSenior==7) return CANNOT_BUY_SENIOR;
                 break;
         }
+
 
         team.addAthlete(athlete);
         if (teamRepository.update(team)) return STATUS_OK;
