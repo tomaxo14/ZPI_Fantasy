@@ -22,7 +22,7 @@ import static com.example.ZPI.entities.ETeamRole.*;
 @Document(collection = "teams")
 public class Team {
     @Transient
-    private final static float DEFAULT_BUDGET = 100;
+    private final static float DEFAULT_BUDGET = 8;
 
     @Id
     private int teamId;
@@ -117,13 +117,33 @@ public class Team {
     }
 
     public void updateAthlete(Athlete athlete) {
+        ETeamRole athleteRole = getAthleteRole(athlete.getAthleteId());
         athletes.remove(athlete);
+        athlete.setTeamRole(athleteRole);
         athletes.add(athlete);
+        this.points = 0;
+        athletes.forEach(athlete1 -> this.points += athlete1.getPoints());
+
+    }
+
+    private ETeamRole getAthleteRole(int athleteId) {
+        for(Athlete athlete : athletes) {
+            if(athlete.getAthleteId() == athleteId) return athlete.getTeamRole();
+        }
+
+        return null;
     }
 
     public void removeAthlete(Athlete tempAthlete) {
         athletes.remove(tempAthlete);
         budget = budget + tempAthlete.getValue();
+    }
+
+    public void removePerformances() {
+        for(Athlete athlete : athletes) {
+            athlete.setPerformances(new HashSet<>());
+            athlete.setPoints(0);
+        }
     }
 
     @Override

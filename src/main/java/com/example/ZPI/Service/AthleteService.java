@@ -65,20 +65,22 @@ public class AthleteService {
         Team team;
         if(user.getTeam()==null){
             hasTeam=false;
-            return new TeamAthletesResponse(new HashSet<>() , hasTeam);
+            return new TeamAthletesResponse(null, new HashMap<>());
         }else {
             Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
             team = teamOpt.get();
-            //Set<Athlete> athletes = team.getAthletes();
+            Map<Integer, String> clubNames = new HashMap<>();
 
             //pobieranie nazwy klubu każdego sportowca
-//            for(Athlete athlete : athletes){
-//                Optional<Club>clubOpt = clubRepository.findById(athlete.getClub());
-//                Club club = clubOpt.get();
+            Set<Athlete> athletes = team.getAthletes();
+            for(Athlete athlete : athletes){
+                Optional<Club> clubOpt = clubRepository.findById(athlete.getClub());
+                Club club = clubOpt.get();
+                clubNames.put(club.getClubId(), club.getName());
 //                Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
 //                pairList.add(pair);
-//            }
-            return new TeamAthletesResponse(team.getAthletes(), hasTeam);
+            }
+            return new TeamAthletesResponse(team, clubNames);
         }
     }
 

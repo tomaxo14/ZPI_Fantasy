@@ -7,10 +7,12 @@ import com.example.ZPI.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
 public class MatchService {
+    public static final int FAILED = -1;
     public static final int STATUS_OK = 200;
     public static final int CLUB_NOT_FOUND = 1;
     public static final int ATHLETE_NOT_FOUND = 2;
@@ -58,7 +60,7 @@ public class MatchService {
         for (Match match : matches) {
             for (Club club : match.getClubs()) {
                 Optional<Club> dbClub = clubRepository.findById(club.getClubId());
-                if(dbClub.isPresent() && !dbClub.get().getMatches().contains(match)) {
+                if (dbClub.isPresent() && !dbClub.get().getMatches().contains(match)) {
                     dbClub.get().addMatch(match);
                     clubRepository.update(dbClub.get());
                     counter++;
@@ -67,6 +69,18 @@ public class MatchService {
         }
 
         return counter;
+    }
+
+    public int addMatches(String directoryPath) {
+        File directory = new File(directoryPath);
+        int matches = 0;
+        for (File fileEntry : directory.listFiles()) {
+            int result = addMatch(fileEntry.getAbsolutePath());
+            if (result != STATUS_OK) return FAILED;
+            matches++;
+        }
+
+        return matches;
     }
 
     public int addMatch(String filepath) {
@@ -91,11 +105,14 @@ public class MatchService {
 
         for (Map.Entry<String, Performance> entry : preparedMatch.getPerformances().entrySet()) {
             String[] name = entry.getKey().split(" ");
-            Optional<Athlete> athlete = athleteRepository.findByFirstNameContainsAndSurnameContains(name[0], name[1]);
-            if (athlete.isPresent()) {
+            Optional<Athlete> athleteOpt = athleteRepository.findByFirstNameContainsAndSurnameContains(name[0], name[1]);
+            if (athleteOpt.isPresent()) {
+                Athlete athlete = athleteOpt.get();
                 Performance performance = entry.getValue();
                 performances.add(performance);
-                athletes.add(athlete.get());
+                athlete.addPerformance(performance);
+                athleteRepository.update(athlete);
+                athletes.add(athlete);
             } else {
                 System.out.println("Nie znaleziono zawodnika: " + entry.getKey());
                 return ATHLETE_NOT_FOUND;
@@ -122,7 +139,7 @@ public class MatchService {
 
         for (Club club : match.getClubs()) {
             Optional<Club> dbClub = clubRepository.findById(club.getClubId());
-            if(dbClub.isPresent()) {
+            if (dbClub.isPresent()) {
                 dbClub.get().addMatch(match);
                 clubRepository.update(dbClub.get());
             }
@@ -132,9 +149,8 @@ public class MatchService {
         for (Team team : teams) {
             for (Athlete athlete : athletes) {
                 if (team.getAthletes().contains(athlete)) {
-                    Team updated = team;
-                    updated.updateAthlete(athlete);
-                    teamRepository.update(updated);
+                    team.updateAthlete(athlete);
+                    teamRepository.update(team);
                 }
             }
         }
@@ -142,7 +158,7 @@ public class MatchService {
         return STATUS_OK;
     }
 
-    public List<Match> matchWeekResults(int matchWeek){
+    public List<Match> matchWeekResults(int matchWeek) {
         return matchRepository.findAllByMatchWeek(matchWeek);
     }
 
@@ -162,25 +178,32 @@ public class MatchService {
 
         //performancy w zawodnikach
         List<Athlete> athletes = athleteRepository.findAll();
-        for(Athlete athlete : athletes){
-            if(athlete.getPerformances()!=null){
+        for (Athlete athlete : athletes) {
+            if (athlete.getPerformances() != null) {
                 athlete.setPerformances(new HashSet<>());
+                athlete.setPoints(0);
                 athleteRepository.update(athlete);
             }
         }
 
+        //usuwanie performance u zawodnikow w teamach
+        List<Team> teams = teamRepository.findAll();
+        for (Team team : teams) {
+            team.removePerformances();
+            teamRepository.update(team);
+        }
+
         //usuwanie meczów ???
-        for (int i=0; i<matches.size(); i++) {
+        for (int i = 0; i < matches.size(); i++) {
             matchRepository.delete(matches.get(i));
         }
 
-        List<Performance>performances = performanceRepository.findAll();
+        List<Performance> performances = performanceRepository.findAll();
 
         //usuwanie performancow ???
-        for (int i=0; i<performances.size(); i++) {
+        for (int i = 0; i < performances.size(); i++) {
             performanceRepository.delete(performances.get(i));
         }
-
 
     }
 }
