@@ -18,6 +18,7 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom{
         Query query = new Query(Criteria.where("_id").is(team.getTeamId()));
         Update update = new Update();
         update.set("athletes",team.getAthletes());
+        update.set("points", team.getPoints());
         update.set("budget", team.getBudget());
         UpdateResult result = mongoTemplate.updateFirst(query, update, Team.class);
         return result.getModifiedCount()>0;

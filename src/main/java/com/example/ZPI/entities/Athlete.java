@@ -46,6 +46,10 @@ public class Athlete {
             performances = new HashSet<>();
         }
         performances.add(tempPerformance);
+
+        this.points = 0;
+
+        performances.forEach(performance -> this.points += performance.getPoints());
     }
 
     @Override

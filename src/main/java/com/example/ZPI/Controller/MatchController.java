@@ -36,6 +36,20 @@ public class MatchController {
         }
     }
 
+    @PostMapping("/addMatches")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> addMatches(Principal principal, @RequestParam String filepath) {
+
+        int matches = matchService.addMatches(filepath);
+        switch (matches) {
+            case MatchService.FAILED:
+                return ResponseEntity.badRequest().body("Nie udało się wczytać wszystkich meczów.");
+            default:
+                return ResponseEntity.ok("Liczba wprowadzonych meczów: " + matches);
+
+        }
+    }
+
     @PostMapping("/updateClubMatches")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateClubMatches(Principal principal) {
