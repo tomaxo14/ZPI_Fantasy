@@ -359,15 +359,22 @@ public class TeamService {
         return FAILED;
     }
 
-    public RankingResponse ranking(){
+    public List<RankingResponse> ranking(){
 
         List<Team>teams = teamRepository.findAll();
-        List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
+        List<Pair<Team, Integer>>teamsAndPoints = new ArrayList<>();
         for (Team teamInTeams: teams){
-            teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
+            teamsAndPoints.add(new Pair<>(teamInTeams, teamInTeams.getPoints()));
         }
         Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
-        return null;
+
+        int ranking=0;
+        List<RankingResponse> resultList = new ArrayList<>();
+        for (Pair<Team, Integer> pair : teamsAndPoints){
+            ranking++;
+            resultList.add(new RankingResponse(pair.getKey(), ranking));
+        }
+        return resultList;
     }
 
 }

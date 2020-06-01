@@ -1,6 +1,7 @@
 package com.example.ZPI.Service;
 
 import com.example.ZPI.Model.AthleteDetailsResponse;
+import com.example.ZPI.Model.StatisticsResponse;
 import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.entities.*;
@@ -154,5 +155,38 @@ public class AthleteService {
         }
 
         return new AthleteDetailsResponse(athlete, nextMatch, lastPerformance, clubName);
+    }
+
+    public List<StatisticsResponse> statistics(){
+        List<Athlete>athletes = athleteRepository.findAll();
+        List<StatisticsResponse>resultList = new ArrayList<>();
+        for(Athlete athlete: athletes){
+            Optional<Club> optClub = clubRepository.findById(athlete.getClub());
+            Club club = optClub.get();
+            String clubName = club.getName();
+            int overallPoints = athlete.getPoints();
+            int points=0;
+            int bonuses=0;
+            int heats=0;
+            for (Performance performance: athlete.getPerformances()){
+                points+=performance.getPoints();
+                bonuses+=performance.getBonuses();
+                heats+=performance.getHeats();
+            }
+            double average=0;
+            if(heats!=0) {
+                average = (double)overallPoints / heats;
+            }
+            resultList.add(new StatisticsResponse(athlete, clubName, average, points, bonuses, heats, overallPoints));
+        }
+
+        Collections.sort(resultList, Comparator.comparing(p -> -p.getOverall()));
+        int ranking=0;
+        for(StatisticsResponse sr : resultList){
+            ranking++;
+            sr.setRanking(ranking);
+        }
+
+        return resultList;
     }
 }

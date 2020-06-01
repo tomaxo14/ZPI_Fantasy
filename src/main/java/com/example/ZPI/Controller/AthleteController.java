@@ -35,4 +35,9 @@ public class AthleteController {
         String username = principal.getName();
         return ResponseEntity.ok(athleteService.getTeamAthletes(username));
     }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<?> statistics(){
+        return ResponseEntity.ok(athleteService.statistics());
+    }
 }
