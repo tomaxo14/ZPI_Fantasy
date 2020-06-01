@@ -1,15 +1,16 @@
 package com.example.ZPI.Service;
 
+import com.example.ZPI.Model.RankingResponse;
 import com.example.ZPI.Repository.TeamRepository;
 import com.example.ZPI.entities.Athlete;
 import com.example.ZPI.entities.ETeamRole;
 import com.example.ZPI.entities.Team;
 import com.example.ZPI.entities.User;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,6 +67,7 @@ public class TeamService {
         if (user.getTeam() != null) return USER_ALREADY_OWNS_A_TEAM;
 
         Team team = new Team(counterService.getNextId("team"), teamName);
+        team.setUser(user.getLogin());
         team = teamRepository.save(team);
         userService.updateTeam(user, team.getTeamId());
         return STATUS_OK;
@@ -355,6 +357,17 @@ public class TeamService {
         if (teamRepository.update(team)) return STATUS_OK;
 
         return FAILED;
+    }
+
+    public RankingResponse ranking(){
+
+        List<Team>teams = teamRepository.findAll();
+        List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
+        for (Team teamInTeams: teams){
+            teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
+        }
+        Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+        return null;
     }
 
 }

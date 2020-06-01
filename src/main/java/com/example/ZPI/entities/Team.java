@@ -31,7 +31,7 @@ public class Team {
     private float budget;
     private int points;
 
-    private int user;
+    private String user;
     private Set<Athlete> athletes;
 
     public Team(int teamId, String name) {
