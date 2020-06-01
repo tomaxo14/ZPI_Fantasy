@@ -4,6 +4,7 @@ import com.example.ZPI.Model.AthleteDetailsResponse;
 import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.entities.*;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,11 +62,10 @@ public class AthleteService {
 
         //ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
 
-
         Team team;
         if(user.getTeam()==null){
             hasTeam=false;
-            return new TeamAthletesResponse(null, new HashMap<>());
+            return new TeamAthletesResponse(null, new HashMap<>(), 0);
         }else {
             Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
             team = teamOpt.get();
@@ -80,7 +80,23 @@ public class AthleteService {
 //                Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
 //                pairList.add(pair);
             }
-            return new TeamAthletesResponse(team, clubNames);
+
+            List<Team>teams=teamRepository.findAll();
+            List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
+            for (Team teamInTeams: teams){
+                teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
+            }
+            Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+
+
+            int ranking=0;
+            for(Pair pair: teamsAndPoints){
+                ranking++;
+                if((int)pair.getKey()==team.getTeamId()){
+                    break;
+                }
+            }
+            return new TeamAthletesResponse(team, clubNames, ranking);
         }
     }
 

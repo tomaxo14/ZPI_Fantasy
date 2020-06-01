@@ -176,7 +176,7 @@ public class MatchService {
             }
         }
 
-        //performancy w zawodnikach
+        //performancy i punkty w zawodnikach
         List<Athlete> athletes = athleteRepository.findAll();
         for (Athlete athlete : athletes) {
             if (athlete.getPerformances() != null) {
@@ -193,14 +193,14 @@ public class MatchService {
             teamRepository.update(team);
         }
 
-        //usuwanie meczów ???
+        //usuwanie meczów
         for (int i = 0; i < matches.size(); i++) {
             matchRepository.delete(matches.get(i));
         }
 
         List<Performance> performances = performanceRepository.findAll();
 
-        //usuwanie performancow ???
+        //usuwanie performancow
         for (int i = 0; i < performances.size(); i++) {
             performanceRepository.delete(performances.get(i));
         }
