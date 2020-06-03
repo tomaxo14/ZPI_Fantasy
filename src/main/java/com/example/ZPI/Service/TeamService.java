@@ -2,11 +2,12 @@ package com.example.ZPI.Service;
 
 import com.example.ZPI.Model.RankingResponse;
 import com.example.ZPI.Repository.TeamRepository;
+import com.example.ZPI.Utils.MapUtil;
 import com.example.ZPI.entities.Athlete;
 import com.example.ZPI.entities.ETeamRole;
 import com.example.ZPI.entities.Team;
 import com.example.ZPI.entities.User;
-import javafx.util.Pair;
+//import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -362,17 +363,21 @@ public class TeamService {
     public List<RankingResponse> ranking(){
 
         List<Team>teams = teamRepository.findAll();
-        List<Pair<Team, Integer>>teamsAndPoints = new ArrayList<>();
+//        List<Pair<Team, Integer>>teamsAndPoints = new ArrayList<>();
+        Map<Team, Integer> teamsAndPoints = new HashMap<>();
         for (Team teamInTeams: teams){
-            teamsAndPoints.add(new Pair<>(teamInTeams, teamInTeams.getPoints()));
+//            teamsAndPoints.add(new Pair<>(teamInTeams, teamInTeams.getPoints()));
+            teamsAndPoints.put(teamInTeams, teamInTeams.getPoints());
+
         }
-        Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+//        Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+        teamsAndPoints = MapUtil.sortByValue(teamsAndPoints);
 
         int ranking=0;
         List<RankingResponse> resultList = new ArrayList<>();
-        for (Pair<Team, Integer> pair : teamsAndPoints){
+        for (Map.Entry<Team, Integer> entry : teamsAndPoints.entrySet()) {
             ranking++;
-            resultList.add(new RankingResponse(pair.getKey(), ranking));
+            resultList.add(new RankingResponse(entry.getKey(), ranking));
         }
         return resultList;
     }
