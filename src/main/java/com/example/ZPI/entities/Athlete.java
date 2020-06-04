@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -41,6 +40,12 @@ public class Athlete {
         this.category = Category.valueOf(category);
     }
 
+    public boolean isSub() {
+        return (this.teamRole == ETeamRole.SUB1
+                || this.teamRole == ETeamRole.SUB2
+                || this.teamRole == ETeamRole.SUB3);
+    }
+
     public void addPerformance(Performance tempPerformance) {
         if (performances == null) {
             performances = new HashSet<>();
@@ -49,7 +54,25 @@ public class Athlete {
 
         this.points = 0;
 
-        performances.forEach(performance -> this.points += performance.getPoints());
+        performances.forEach(performance ->
+                this.points += performance.getPoints() + performance.getBonuses());
+    }
+
+    public Performance getPeformanceByMatchWeek(int matchWeek) {
+        for (Performance performance : performances) {
+            if (performance.getMatchWeek() == matchWeek) return performance;
+        }
+
+        return null;
+    }
+
+    public int getPointsByMatchWeek(int matchWeek) {
+        for (Performance performance : performances) {
+            if (performance.getMatchWeek() == matchWeek)
+                return (performance.getPoints() + performance.getBonuses());
+        }
+
+        return -1;
     }
 
     @Override

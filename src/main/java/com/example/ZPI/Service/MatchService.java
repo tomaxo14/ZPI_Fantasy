@@ -84,7 +84,7 @@ public class MatchService {
     }
 
     public int addMatch(String filepath) {
-        System.out.println(" - - MatchService.addMatch() - - ");
+//        System.out.println(" - - MatchService.addMatch() - - ");
         PreparedMatch preparedMatch = MatchLoader.loadMatch(filepath);
         Match match = preparedMatch.getMatch();
         Club[] matchClubs = match.getClubs();
@@ -114,17 +114,10 @@ public class MatchService {
                 athleteRepository.update(athlete);
                 athletes.add(athlete);
             } else {
-                System.out.println("Nie znaleziono zawodnika: " + entry.getKey());
+//                System.out.println("Nie znaleziono zawodnika: " + entry.getKey());
                 return ATHLETE_NOT_FOUND;
             }
         }
-
-        System.out.println("Match to add:");
-        System.out.println(match);
-        System.out.println("Performances to add:");
-        System.out.println(performances);
-        System.out.println("Athletes to update:");
-        System.out.println(athletes);
 
 //         add performances
         for (int i = 0; i < performances.size(); i++) {
@@ -205,5 +198,8 @@ public class MatchService {
             performanceRepository.delete(performances.get(i));
         }
 
+        counterService.updateValue("matchweek", 0);
+        counterService.updateValue("match",0);
+        counterService.updateValue("performance", 0);
     }
 }

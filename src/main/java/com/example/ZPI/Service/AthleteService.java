@@ -4,8 +4,9 @@ import com.example.ZPI.Model.AthleteDetailsResponse;
 import com.example.ZPI.Model.StatisticsResponse;
 import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
+import com.example.ZPI.Utils.MapUtil;
 import com.example.ZPI.entities.*;
-import javafx.util.Pair;
+//import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class AthleteService {
     public List<Athlete> getAllAthletes() {
 
         //ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
-        List<Athlete>athleteList = athleteRepository.findAll();
+        List<Athlete> athleteList = athleteRepository.findAll();
 
         //pobieranie nazwy klubu każdego sportowca
 //        for(Athlete athlete : athleteList){
@@ -64,17 +65,17 @@ public class AthleteService {
         //ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
 
         Team team;
-        if(user.getTeam()==null){
-            hasTeam=false;
+        if (user.getTeam() == null) {
+            hasTeam = false;
             return new TeamAthletesResponse(null, new HashMap<>(), 0);
-        }else {
+        } else {
             Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
             team = teamOpt.get();
             Map<Integer, String> clubNames = new HashMap<>();
 
             //pobieranie nazwy klubu każdego sportowca
             Set<Athlete> athletes = team.getAthletes();
-            for(Athlete athlete : athletes){
+            for (Athlete athlete : athletes) {
                 Optional<Club> clubOpt = clubRepository.findById(athlete.getClub());
                 Club club = clubOpt.get();
                 clubNames.put(club.getClubId(), club.getName());
@@ -82,18 +83,26 @@ public class AthleteService {
 //                pairList.add(pair);
             }
 
-            List<Team>teams=teamRepository.findAll();
-            List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
-            for (Team teamInTeams: teams){
-                teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
+            List<Team> teams = teamRepository.findAll();
+            Map<Integer, Integer> teamsAndPoints = new HashMap<>();
+//            List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
+            for (Team teamInTeams : teams) {
+//                teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
+                teamsAndPoints.put(teamInTeams.getTeamId(), teamInTeams.getPoints());
             }
-            Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+//            Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
+            teamsAndPoints = MapUtil.sortByValue(teamsAndPoints);
 
-
-            int ranking=0;
-            for(Pair pair: teamsAndPoints){
+            int ranking = 0;
+//            for(Pair pair: teamsAndPoints){
+//                ranking++;
+//                if((int)pair.getKey()==team.getTeamId()){
+//                    break;
+//                }
+//            }
+            for (Map.Entry<Integer, Integer> entry : teamsAndPoints.entrySet()) {
                 ranking++;
-                if((int)pair.getKey()==team.getTeamId()){
+                if (entry.getKey() == team.getTeamId()) {
                     break;
                 }
             }
@@ -126,29 +135,29 @@ public class AthleteService {
 //            matches.add(match);
 //        }
 
-        Set<Match>matches = club.getMatches();
+        Set<Match> matches = club.getMatches();
 
         //aktualna data
 //        String actualDate = dateFormat.format(new Date());
         String actualDate = "2019-04-10";
         String closestDate = dateFormat.format(new Date(Long.MAX_VALUE));
-        Match nextMatch=null;
+        Match nextMatch = null;
 
-        for (Match match : matches){
-            if(match.getDate().compareTo(actualDate)>=0 && match.getDate().compareTo(closestDate)<0){
+        for (Match match : matches) {
+            if (match.getDate().compareTo(actualDate) >= 0 && match.getDate().compareTo(closestDate) < 0) {
                 closestDate = match.getDate();
                 nextMatch = match;
             }
         }
 
-        Set<Performance>performances = athlete.getPerformances();
+        Set<Performance> performances = athlete.getPerformances();
 
         String lastPerformanceDate = "1900-01-01";
         System.out.println(lastPerformanceDate);
-        Performance lastPerformance=null;
+        Performance lastPerformance = null;
         // TODO do sprawdzenia
-        for(Performance performance : performances){
-            if(performance.getDate().compareTo(actualDate)<=0 && performance.getDate().compareTo(lastPerformanceDate)>0){
+        for (Performance performance : performances) {
+            if (performance.getDate().compareTo(actualDate) <= 0 && performance.getDate().compareTo(lastPerformanceDate) > 0) {
                 lastPerformanceDate = performance.getDate();
                 lastPerformance = performance;
             }
@@ -157,32 +166,32 @@ public class AthleteService {
         return new AthleteDetailsResponse(athlete, nextMatch, lastPerformance, clubName);
     }
 
-    public List<StatisticsResponse> statistics(){
-        List<Athlete>athletes = athleteRepository.findAll();
-        List<StatisticsResponse>resultList = new ArrayList<>();
-        for(Athlete athlete: athletes){
+    public List<StatisticsResponse> statistics() {
+        List<Athlete> athletes = athleteRepository.findAll();
+        List<StatisticsResponse> resultList = new ArrayList<>();
+        for (Athlete athlete : athletes) {
             Optional<Club> optClub = clubRepository.findById(athlete.getClub());
             Club club = optClub.get();
             String clubName = club.getName();
             int overallPoints = athlete.getPoints();
-            int points=0;
-            int bonuses=0;
-            int heats=0;
-            for (Performance performance: athlete.getPerformances()){
-                points+=performance.getPoints();
-                bonuses+=performance.getBonuses();
-                heats+=performance.getHeats();
+            int points = 0;
+            int bonuses = 0;
+            int heats = 0;
+            for (Performance performance : athlete.getPerformances()) {
+                points += performance.getPoints();
+                bonuses += performance.getBonuses();
+                heats += performance.getHeats();
             }
-            double average=0;
-            if(heats!=0) {
-                average = (double)overallPoints / heats;
+            double average = 0;
+            if (heats != 0) {
+                average = (double) overallPoints / heats;
             }
             resultList.add(new StatisticsResponse(athlete, clubName, average, points, bonuses, heats, overallPoints));
         }
 
         Collections.sort(resultList, Comparator.comparing(p -> -p.getOverall()));
-        int ranking=0;
-        for(StatisticsResponse sr : resultList){
+        int ranking = 0;
+        for (StatisticsResponse sr : resultList) {
             ranking++;
             sr.setRanking(ranking);
         }

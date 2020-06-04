@@ -193,4 +193,23 @@ public class TeamController {
         return ResponseEntity.ok(teamService.ranking());
     }
 
+    @PostMapping("/updatePoints")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> updatePoints(Principal principal,
+                                          @RequestParam int matchweek) {
+
+        int status = teamService.updatePoints(matchweek);
+
+        switch (status) {
+            case TeamService.STATUS_OK:
+                return ResponseEntity.ok("Zaktualizowano punkty po " + matchweek + ". kolejce.");
+            case TeamService.MATCHWEEK_ALREADY_UPDATED:
+                return ResponseEntity.badRequest().body("Punkty za " + matchweek + ". kolejkę zostały już zaktualizowane.");
+            case TeamService.UPDATE_PREVIOUS_MATCHWEEK:
+                return ResponseEntity.badRequest().body("Aby zaktualizować punkty z bieżącej kolejki, najpierw należy uwzględnić wcześniejsze kolejki.");
+            default:
+                return ResponseEntity.badRequest().body("Nie udało się zaktualizować punktów.");
+        }
+    }
+
 }
