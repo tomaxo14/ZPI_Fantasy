@@ -52,6 +52,23 @@ public class Athlete {
         performances.forEach(performance -> this.points += performance.getPoints());
     }
 
+    public Performance getPeformanceByMatchWeek(int matchWeek) {
+        for(Performance performance : performances) {
+            if(performance.getMatchWeek()==matchWeek) return performance;
+        }
+
+        return null;
+    }
+
+    public int getPointsByMatchWeek(int matchWeek) {
+        for(Performance performance : performances) {
+            if(performance.getMatchWeek()==matchWeek)
+                return (performance.getPoints() + performance.getBonuses());
+        }
+
+        return -1;
+    }
+
     @Override
     public String toString() {
         return "Athlete{" +

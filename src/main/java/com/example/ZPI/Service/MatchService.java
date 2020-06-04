@@ -205,5 +205,8 @@ public class MatchService {
             performanceRepository.delete(performances.get(i));
         }
 
+        counterService.updateValue("matchweek", 0);
+        counterService.updateValue("match",0);
+        counterService.updateValue("performance", 0);
     }
 }

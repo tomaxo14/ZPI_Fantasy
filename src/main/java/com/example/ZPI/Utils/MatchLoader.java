@@ -23,7 +23,8 @@ public class MatchLoader {
             String line;
             line = br.readLine();   // first empty
             line = br.readLine();   // matchWeek
-            match.setMatchWeek(Integer.valueOf(line));
+            int matchWeek = Integer.valueOf(line);
+            match.setMatchWeek(matchWeek);
             String date = br.readLine();   // date
             match.setDate(date.replaceAll("\\s+", ""));
             line = br.readLine();   // host team
@@ -43,7 +44,7 @@ public class MatchLoader {
                 int heats = Integer.valueOf(br.readLine());
                 int points = Integer.valueOf(br.readLine());
                 int bonus = Integer.valueOf(br.readLine());
-                Performance performance = new Performance(date, points, bonus, heats);
+                Performance performance = new Performance(date, matchWeek, points, bonus, heats);
                 performances.put(athlete, performance);
                 line = br.readLine();
             }
@@ -54,7 +55,7 @@ public class MatchLoader {
                 int heats = Integer.valueOf(br.readLine());
                 int points = Integer.valueOf(br.readLine());
                 int bonus = Integer.valueOf(br.readLine());
-                Performance performance = new Performance(date, points, bonus, heats);
+                Performance performance = new Performance(date, matchWeek, points, bonus, heats);
                 performances.put(athlete, performance);
                 line = br.readLine();
             }

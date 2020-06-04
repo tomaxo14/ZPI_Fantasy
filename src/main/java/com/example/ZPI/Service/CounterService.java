@@ -15,6 +15,20 @@ public class CounterService {
     @Autowired
     private MongoOperations mongo;
 
+    public int getCurrentValue(String collectionName) {
+        Counter counter = mongo.findOne(query(where("_id").is(collectionName)), Counter.class);
+        if (counter != null) return counter.getValue();
+
+        return 0;
+    }
+
+    public void updateValue(String collectionName, int newValue) {
+        mongo.findAndModify(query(where("_id").is(collectionName)),
+                new Update().set("value", newValue),
+                options().returnNew(true),
+                Counter.class);
+    }
+
     public int getNextId(String collectionName) {
         Counter counter = mongo.findAndModify(query(where("_id").is(collectionName)),
                 new Update().inc("value", 1),

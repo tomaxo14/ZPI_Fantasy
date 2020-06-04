@@ -16,10 +16,10 @@ public class Performance {
     private int performanceId;
 
     private String date;
+    private int matchWeek;
     private int points;
     private int bonuses;
     private int heats;
-
 
     public Performance(int points, int bonuses, int heats) {
         this.points = points;
@@ -29,6 +29,14 @@ public class Performance {
 
     public Performance(String date, int points, int bonuses, int heats) {
         this.date = date;
+        this.points = points;
+        this.bonuses = bonuses;
+        this.heats = heats;
+    }
+
+    public Performance(String date, int matchWeek, int points, int bonuses, int heats) {
+        this.date = date;
+        this.matchWeek = matchWeek;
         this.points = points;
         this.bonuses = bonuses;
         this.heats = heats;

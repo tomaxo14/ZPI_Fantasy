@@ -121,9 +121,12 @@ public class Team {
         athletes.remove(athlete);
         athlete.setTeamRole(athleteRole);
         athletes.add(athlete);
-        this.points = 0;
-        athletes.forEach(athlete1 -> this.points += athlete1.getPoints());
+//        this.points = 0;
+//        athletes.forEach(athlete1 -> this.points += athlete1.getPoints());
+    }
 
+    public void addPoints(int points) {
+        this.points += points;
     }
 
     private ETeamRole getAthleteRole(int athleteId) {
@@ -144,6 +147,8 @@ public class Team {
             athlete.setPerformances(new HashSet<>());
             athlete.setPoints(0);
         }
+
+        this.points = 0;
     }
 
     @Override
