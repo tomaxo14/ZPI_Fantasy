@@ -1,11 +1,9 @@
 package com.example.ZPI.Utils;
 
 import com.example.ZPI.Model.PreparedMatch;
-import com.example.ZPI.Repository.ClubRepository;
 import com.example.ZPI.entities.Club;
 import com.example.ZPI.entities.Match;
 import com.example.ZPI.entities.Performance;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.HashMap;
@@ -66,8 +64,6 @@ public class MatchLoader {
             e.printStackTrace();
         }
 
-        System.out.println(match);
-        System.out.println(performances);
         return new PreparedMatch(match, performances);
     }
 }
