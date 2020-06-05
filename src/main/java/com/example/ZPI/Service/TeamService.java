@@ -1,7 +1,9 @@
 package com.example.ZPI.Service;
 
 import com.example.ZPI.Model.CreateTeamResponse;
+import com.example.ZPI.Model.GetTeamResponse;
 import com.example.ZPI.Model.RankingResponse;
+import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.TeamRepository;
 import com.example.ZPI.Utils.MapUtil;
 import com.example.ZPI.entities.*;
@@ -494,14 +496,56 @@ public class TeamService {
     }
 
 
-    public Team getTeamByTeamName(String teamName){
+    public GetTeamResponse getTeamByTeamName(String teamName){
         Optional<Team> optTeam = teamRepository.findByNameEquals(teamName);
-        return optTeam.orElse(null);
+        if(optTeam.isPresent()){
+            Team team = optTeam.get();
+            List<Team> teams = teamRepository.findAll();
+            Map<Integer, Integer> teamsAndPoints = new HashMap<>();
+
+            for (Team teamInTeams : teams) {
+                teamsAndPoints.put(teamInTeams.getTeamId(), teamInTeams.getPoints());
+            }
+
+            teamsAndPoints = MapUtil.sortByValue(teamsAndPoints);
+
+            int ranking = 0;
+
+            for (Map.Entry<Integer, Integer> entry : teamsAndPoints.entrySet()) {
+                ranking++;
+                if (entry.getKey() == team.getTeamId()) {
+                    break;
+                }
+            }
+            return new GetTeamResponse(team, ranking);
+        }else
+        return null;
     }
 
-    public Team getTeamByUser(String user){
+    public GetTeamResponse getTeamByUser(String user){
         Optional<Team> optTeam = teamRepository.findByUser(user);
-       return optTeam.orElse(null);
+        if(optTeam.isPresent()){
+            Team team = optTeam.get();
+            List<Team> teams = teamRepository.findAll();
+            Map<Integer, Integer> teamsAndPoints = new HashMap<>();
+
+            for (Team teamInTeams : teams) {
+                teamsAndPoints.put(teamInTeams.getTeamId(), teamInTeams.getPoints());
+            }
+
+            teamsAndPoints = MapUtil.sortByValue(teamsAndPoints);
+
+            int ranking = 0;
+
+            for (Map.Entry<Integer, Integer> entry : teamsAndPoints.entrySet()) {
+                ranking++;
+                if (entry.getKey() == team.getTeamId()) {
+                    break;
+                }
+            }
+            return new GetTeamResponse(team, ranking);
+        }else
+            return null;
     }
 
 }
