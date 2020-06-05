@@ -1,5 +1,6 @@
 package com.example.ZPI.Controller;
 
+import com.example.ZPI.Model.CreateTeamResponse;
 import com.example.ZPI.Service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +25,11 @@ public class TeamController {
     public ResponseEntity<?> createTeam(Principal principal,
                                         @RequestParam String teamName) {
 
-        int status = teamService.createTeam(principal.getName(), teamName);
-
-        switch (status) {
-            case TeamService.STATUS_OK:
-                return ResponseEntity.ok("Drużyna została utworzona.");
-            case TeamService.USER_NOT_FOUND:
-                return ResponseEntity.badRequest().body("Aby stworzyć drużynę należy się zalogować.");
-            case TeamService.USER_ALREADY_OWNS_A_TEAM:
-                return ResponseEntity.badRequest().body("Posiadasz już swoją drużynę.");
-            case TeamService.TEAM_ALREADY_EXISTS:
-                return ResponseEntity.badRequest().body("Drużyna o takiej nazwie już istnieje.");
-            default:
-                return ResponseEntity.badRequest().body("Nie udało się stworzyć drużyny.");
+        CreateTeamResponse response = teamService.createTeam(principal.getName(), teamName);
+        if(response.getTeam()!=null) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
