@@ -493,4 +493,15 @@ public class TeamService {
         return null;
     }
 
+
+    public Team getTeamByTeamName(String teamName){
+        Optional<Team> optTeam = teamRepository.findByNameEquals(teamName);
+        return optTeam.orElse(null);
+    }
+
+    public Team getTeamByUser(String user){
+        Optional<Team> optTeam = teamRepository.findByUser(user);
+       return optTeam.orElse(null);
+    }
+
 }

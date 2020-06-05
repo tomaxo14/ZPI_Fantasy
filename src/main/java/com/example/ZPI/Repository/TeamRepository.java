@@ -18,4 +18,5 @@ public interface TeamRepository extends MongoRepository<Team, Integer>, TeamRepo
 
     Optional<Team> findByNameEquals(String name);
 
+    Optional<Team> findByUser(String user);
 }

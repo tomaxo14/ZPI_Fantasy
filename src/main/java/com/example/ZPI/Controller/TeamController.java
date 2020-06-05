@@ -205,4 +205,14 @@ public class TeamController {
         }
     }
 
+
+    @GetMapping("/getTeamByTeamName")
+    public ResponseEntity<?> getTeamByTeamName(@RequestParam String teamName) {
+        return ResponseEntity.ok(teamService.getTeamByTeamName(teamName));
+    }
+
+    @GetMapping("/getTeamByUser")
+    public ResponseEntity<?> getTeamByUser(@RequestParam String user) {
+        return ResponseEntity.ok(teamService.getTeamByUser(user));
+    }
 }
