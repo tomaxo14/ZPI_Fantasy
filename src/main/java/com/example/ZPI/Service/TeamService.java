@@ -1,5 +1,6 @@
 package com.example.ZPI.Service;
 
+import com.example.ZPI.Model.CreateTeamResponse;
 import com.example.ZPI.Model.RankingResponse;
 import com.example.ZPI.Repository.TeamRepository;
 import com.example.ZPI.Utils.MapUtil;
@@ -53,22 +54,27 @@ public class TeamService {
     @Autowired
     CounterService counterService;
 
-    public int createTeam(String username, String teamName) {
+    public CreateTeamResponse createTeam(String username, String teamName) {
 
         Optional<User> userOpt = userService.getUser(username);
         Optional<Team> teamOpt = teamRepository.findByNameEquals(teamName);
 
-        if (!userOpt.isPresent()) return USER_NOT_FOUND;
-        if (teamOpt.isPresent()) return TEAM_ALREADY_EXISTS;
+        if (!userOpt.isPresent()) return new CreateTeamResponse("Aby stworzyć drużynę należy się zalogować.", null);
+
+        if (teamOpt.isPresent()) return new CreateTeamResponse("Drużyna o takiej nazwie już istnieje.", null);
 
         User user = userOpt.get();
-        if (user.getTeam() != null) return USER_ALREADY_OWNS_A_TEAM;
+        if (user.getTeam() != null) {
+            Optional<Team> userTeamOpt = teamRepository.findById(user.getTeam());
+            return new CreateTeamResponse("Posiadasz już swoją drużynę.", userTeamOpt.get());
+        }
 
         Team team = new Team(counterService.getNextId("team"), teamName);
         team.setUser(user.getLogin());
         team = teamRepository.save(team);
         userService.updateTeam(user, team.getTeamId());
-        return STATUS_OK;
+
+        return new CreateTeamResponse("Drużyna została utworzona.", team);
     }
 
     public int resetTeam(String username) {
@@ -458,7 +464,7 @@ public class TeamService {
             teamPoints.addAndGet(points);
         });
 
-           return teamPoints.get();
+        return teamPoints.get();
     }
 
     private Athlete findSub(Athlete regular, List<Athlete> subAthletes, int matchWeek,
