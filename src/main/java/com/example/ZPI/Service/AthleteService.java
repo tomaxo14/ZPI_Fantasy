@@ -153,7 +153,6 @@ public class AthleteService {
         Set<Performance> performances = athlete.getPerformances();
 
         String lastPerformanceDate = "1900-01-01";
-        System.out.println(lastPerformanceDate);
         Performance lastPerformance = null;
         // TODO do sprawdzenia
         for (Performance performance : performances) {
