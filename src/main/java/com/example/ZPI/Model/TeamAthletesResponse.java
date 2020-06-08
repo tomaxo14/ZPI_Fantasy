@@ -13,10 +13,17 @@ public class TeamAthletesResponse {
     private Team team;
     private Map<Integer, String> clubs;
     private int ranking;
+    private int matchWeek;
+    private int points;
 
-    public TeamAthletesResponse(Team team, Map<Integer, String> clubs, int ranking) {
+    public TeamAthletesResponse() {
+    }
+
+    public TeamAthletesResponse(Team team, Map<Integer, String> clubs, int ranking, int matchWeek, int points) {
         this.team = team;
         this.clubs = clubs;
-        this.ranking=ranking;
+        this.ranking = ranking;
+        this.matchWeek = matchWeek;
+        this.points = points;
     }
 }
