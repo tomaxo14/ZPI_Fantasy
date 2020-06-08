@@ -6,7 +6,6 @@ import com.example.ZPI.Model.TeamAthletesResponse;
 import com.example.ZPI.Repository.*;
 import com.example.ZPI.Utils.MapUtil;
 import com.example.ZPI.entities.*;
-//import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,35 +38,25 @@ public class AthleteService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    TeamService teamService;
+
+    @Autowired
+    CounterService counterService;
+
     public List<Athlete> getAllAthletes() {
-
-        //ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
         List<Athlete> athleteList = athleteRepository.findAll();
-
-        //pobieranie nazwy klubu każdego sportowca
-//        for(Athlete athlete : athleteList){
-//            Optional<Club>clubOpt = clubRepository.findById(athlete.getClub());
-//            Club club = clubOpt.get();
-//            Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
-//            pairList.add(pair);
-//        }
-
         return athleteList;
     }
 
     public TeamAthletesResponse getTeamAthletes(String username) {
 
-        boolean hasTeam = true;
-
         Optional<User> userOpt = userService.getUser(username);
         User user = userOpt.get();
 
-        //ArrayList<Pair<Athlete, String>> pairList = new ArrayList<>();
-
         Team team;
         if (user.getTeam() == null) {
-            hasTeam = false;
-            return new TeamAthletesResponse(null, new HashMap<>(), 0);
+            return new TeamAthletesResponse();
         } else {
             Optional<Team> teamOpt = teamRepository.findById(user.getTeam());
             team = teamOpt.get();
@@ -79,34 +68,28 @@ public class AthleteService {
                 Optional<Club> clubOpt = clubRepository.findById(athlete.getClub());
                 Club club = clubOpt.get();
                 clubNames.put(club.getClubId(), club.getName());
-//                Pair<Athlete, String> pair = new Pair<>(athlete, club.getName());
-//                pairList.add(pair);
             }
 
             List<Team> teams = teamRepository.findAll();
             Map<Integer, Integer> teamsAndPoints = new HashMap<>();
-//            List<Pair<Integer, Integer>>teamsAndPoints = new ArrayList<>();
             for (Team teamInTeams : teams) {
-//                teamsAndPoints.add(new Pair<>(teamInTeams.getTeamId(), teamInTeams.getPoints()));
                 teamsAndPoints.put(teamInTeams.getTeamId(), teamInTeams.getPoints());
             }
-//            Collections.sort(teamsAndPoints, Comparator.comparing(p -> -p.getValue()));
             teamsAndPoints = MapUtil.sortByValue(teamsAndPoints);
 
             int ranking = 0;
-//            for(Pair pair: teamsAndPoints){
-//                ranking++;
-//                if((int)pair.getKey()==team.getTeamId()){
-//                    break;
-//                }
-//            }
+
             for (Map.Entry<Integer, Integer> entry : teamsAndPoints.entrySet()) {
                 ranking++;
                 if (entry.getKey() == team.getTeamId()) {
                     break;
                 }
             }
-            return new TeamAthletesResponse(team, clubNames, ranking);
+
+            int matchWeek = counterService.getCurrentValue("matchweek");
+            int points = teamService.getTeamPointsByMatchWeek(team, matchWeek);
+
+            return new TeamAthletesResponse(team, clubNames, ranking, matchWeek, points);
         }
     }
 
@@ -124,16 +107,6 @@ public class AthleteService {
         String clubName = club.getName();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        //jesli bedziemy przechowywac referencje zamiast całych meczow w clubie
-//        Set<Integer> matchesId = club.getMatches();
-//        Set<Match> matches = new HashSet<>();
-//
-//        for(Integer id : matchesId){
-//            Optional<Match> matchOpt = matchRepository.findById(id);
-//            Match match = matchOpt.get();
-//            matches.add(match);
-//        }
 
         Set<Match> matches = club.getMatches();
 
