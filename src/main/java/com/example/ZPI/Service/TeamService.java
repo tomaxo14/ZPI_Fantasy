@@ -405,7 +405,7 @@ public class TeamService {
         teamRepository.update(team);
     }
 
-    private int getTeamPointsByMatchWeek(Team team, int matchWeek) {
+    public int getTeamPointsByMatchWeek(Team team, int matchWeek) {
         Set<Athlete> athletesSet = team.getAthletes();
         Map<Athlete, Integer> regularAthletes = new LinkedHashMap<>();
         List<Athlete> subAthletes = new ArrayList<>();
