@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 public class MatchLoader {
 
-    // TODO change to MatchResponse (Match, List<Performance>)
     public static PreparedMatch loadMatch(String filepath) {
         File file = new File(filepath);
         Match match = new Match();
@@ -26,11 +25,11 @@ public class MatchLoader {
             String date = br.readLine();   // date
             match.setDate(date.replaceAll("\\s+", ""));
             line = br.readLine();   // host team
-            match.setClub(0, new Club(line, ""));  // add club name - change in Service
+            match.setClub(0, new Club(line, ""));
             line = br.readLine();   // host result
             match.setHostResult(Integer.valueOf(line));
             line = br.readLine();   // away team
-            match.setClub(1, new Club(line, ""));  // add club name - change in Service
+            match.setClub(1, new Club(line, ""));
             line = br.readLine();   // away result
             match.setAwayResult(Integer.valueOf(line));
 
@@ -58,8 +57,6 @@ public class MatchLoader {
                 line = br.readLine();
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

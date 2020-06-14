@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
-import java.text.ParseException;
-
 @Controller
 @CrossOrigin
 public class MatchController {
@@ -21,7 +18,7 @@ public class MatchController {
 
     @PostMapping("/addMatch")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> addMatch(Principal principal, @RequestParam String filepath) {
+    public ResponseEntity<?> addMatch(@RequestParam String filepath) {
 
         switch (matchService.addMatch(filepath)) {
             case MatchService.STATUS_OK:
@@ -38,7 +35,7 @@ public class MatchController {
 
     @PostMapping("/addMatches")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> addMatches(Principal principal, @RequestParam String filepath) {
+    public ResponseEntity<?> addMatches(@RequestParam String filepath) {
 
         int matches = matchService.addMatches(filepath);
         switch (matches) {
@@ -52,7 +49,7 @@ public class MatchController {
 
     @PostMapping("/updateClubMatches")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateClubMatches(Principal principal) {
+    public ResponseEntity<?> updateClubMatches() {
 
         int updated = matchService.updateClubMatches();
         return ResponseEntity.ok("Liczba dodanych meczów do klubów: " + updated);
@@ -60,20 +57,20 @@ public class MatchController {
 
     @PostMapping("/removeClubMatches")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> removeClubMatches(Principal principal) {
+    public ResponseEntity<?> removeClubMatches() {
 
         matchService.removeClubMatches();
         return ResponseEntity.ok("Usunięto mecze klubów.");
     }
 
     @GetMapping("/results")
-    public ResponseEntity<?> matchWeekResults(@RequestParam int matchWeek) throws ParseException {
+    public ResponseEntity<?> matchWeekResults(@RequestParam int matchWeek) {
         return ResponseEntity.ok(matchService.matchWeekResults(matchWeek));
     }
 
     @PostMapping("/removeMatchesAndPerformances")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> removeMatchesAndPerformances(Principal principal) {
+    public ResponseEntity<?> removeMatchesAndPerformances() {
 
         matchService.removeMatchesAndPerformances();
         return ResponseEntity.ok("Usunięto mecze i występy.");

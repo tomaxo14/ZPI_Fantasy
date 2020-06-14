@@ -1,6 +1,5 @@
 package com.example.ZPI.Repository;
 
-import com.example.ZPI.entities.Athlete;
 import com.example.ZPI.entities.Team;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
