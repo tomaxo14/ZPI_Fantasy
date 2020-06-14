@@ -39,7 +39,6 @@ public class Match {
             clubs = new Club[2];
         }
         clubs[index] = tempClub;
-        //tempClub.setMatch(this.getMatchId());
     }
 
     public void addPerformance(Performance tempPerformance) {

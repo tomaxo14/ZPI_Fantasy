@@ -13,7 +13,6 @@ import com.example.ZPI.entities.ERole;
 import com.example.ZPI.entities.Role;
 import com.example.ZPI.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -143,7 +142,6 @@ public class AuthController {
                     .body(new MessageResponse("Podany adres email jest już zajęty."));
         }
 
-        // Create new user's account
         User user = new User(signUpRequest.getLogin(),
                 signUpRequest.getEmail(),
                 signUpRequest.getFirstName(),

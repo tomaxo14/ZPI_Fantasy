@@ -62,7 +62,6 @@ public class AthleteService {
             team = teamOpt.get();
             Map<Integer, String> clubNames = new HashMap<>();
 
-            //pobieranie nazwy klubu każdego sportowca
             Set<Athlete> athletes = team.getAthletes();
             for (Athlete athlete : athletes) {
                 Optional<Club> clubOpt = clubRepository.findById(athlete.getClub());
@@ -110,8 +109,6 @@ public class AthleteService {
 
         Set<Match> matches = club.getMatches();
 
-        //aktualna data
-//        String actualDate = dateFormat.format(new Date());
         String actualDate = "2019-04-10";
         String closestDate = dateFormat.format(new Date(Long.MAX_VALUE));
         Match nextMatch = null;
@@ -127,7 +124,6 @@ public class AthleteService {
 
         String lastPerformanceDate = "1900-01-01";
         Performance lastPerformance = null;
-        // TODO do sprawdzenia
         for (Performance performance : performances) {
             if (performance.getDate().compareTo(actualDate) <= 0 && performance.getDate().compareTo(lastPerformanceDate) > 0) {
                 lastPerformanceDate = performance.getDate();

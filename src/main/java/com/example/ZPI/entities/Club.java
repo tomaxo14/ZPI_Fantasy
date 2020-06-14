@@ -40,7 +40,6 @@ public class Club {
             matches = new HashSet<>();
         }
        matches.add(tempMatch);
-        //tempMatch.setClub(this.getClubId());
     }
 
     @Override
