@@ -84,7 +84,6 @@ public class MatchService {
     }
 
     public int addMatch(String filepath) {
-//        System.out.println(" - - MatchService.addMatch() - - ");
         PreparedMatch preparedMatch = MatchLoader.loadMatch(filepath);
         Match match = preparedMatch.getMatch();
         Club[] matchClubs = match.getClubs();
@@ -114,12 +113,10 @@ public class MatchService {
                 athleteRepository.update(athlete);
                 athletes.add(athlete);
             } else {
-//                System.out.println("Nie znaleziono zawodnika: " + entry.getKey());
                 return ATHLETE_NOT_FOUND;
             }
         }
 
-//         add performances
         for (int i = 0; i < performances.size(); i++) {
             Performance addedPerformance = performanceService.addPerformance(performances.get(i));
             athletes.get(i).addPerformance(addedPerformance);
@@ -157,7 +154,6 @@ public class MatchService {
 
     public void removeMatchesAndPerformances() {
 
-        //mecze w klubach
         List<Match> matches = matchRepository.findAll();
         for (Match match : matches) {
             for (Club club : match.getClubs()) {
@@ -169,7 +165,6 @@ public class MatchService {
             }
         }
 
-        //performancy i punkty w zawodnikach
         List<Athlete> athletes = athleteRepository.findAll();
         for (Athlete athlete : athletes) {
             if (athlete.getPerformances() != null) {
@@ -179,21 +174,18 @@ public class MatchService {
             }
         }
 
-        //usuwanie performance u zawodnikow w teamach
         List<Team> teams = teamRepository.findAll();
         for (Team team : teams) {
             team.removePerformances();
             teamRepository.update(team);
         }
 
-        //usuwanie meczów
         for (int i = 0; i < matches.size(); i++) {
             matchRepository.delete(matches.get(i));
         }
 
         List<Performance> performances = performanceRepository.findAll();
 
-        //usuwanie performancow
         for (int i = 0; i < performances.size(); i++) {
             performanceRepository.delete(performances.get(i));
         }

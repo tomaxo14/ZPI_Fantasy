@@ -1,8 +1,6 @@
 package com.example.ZPI.Controller;
 
-import com.example.ZPI.Service.AthleteService;
 import com.example.ZPI.Service.ClubService;
-import com.example.ZPI.entities.Club;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
